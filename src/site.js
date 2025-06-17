@@ -31,7 +31,7 @@ const popup = new mapboxgl.Popup({
 map.on('load', function () {
     if (config.projection != 'globe'){
         // map.setFog({}); // Set the default atmosphere style
-        $('#btn-spin-toggle').hide();
+        // $('#btn-spin-toggle').hide();
 
     }
     loadData();
@@ -622,9 +622,12 @@ function addLineLayer() {
 
 function addEvents() {
     map.on('click', (e) => {
+        userInteracting = true;
+        spinGlobe();
         const bbox = [ [e.point.x - config.hitArea, e.point.y - config.hitArea], [e.point.x + config.hitArea, e.point.y + config.hitArea]];
         const selectedFeatures = getUniqueFeatures(map.queryRenderedFeatures(bbox, {layers: config.layers}), config.linkField).sort((a, b) => a.properties[config.nameField].localeCompare(b.properties[config.nameField]));
-        
+
+
         if (selectedFeatures.length == 0) return;
 
         const links = selectedFeatures.map(
@@ -726,7 +729,7 @@ $('#projection-toggle').on("click", function() {
     if (config.projection == 'globe') {
         config.projection = "naturalEarth";
         map.setProjection('naturalEarth');
-        $('#btn-spin-toggle').hide();
+        // $('#btn-spin-toggle').hide();
         map.setCenter(config.center);
         map.setZoom(determineZoom());
 
@@ -734,7 +737,7 @@ $('#projection-toggle').on("click", function() {
         config.projection = "globe";
         map.setProjection("globe");
         map.setCenter(config.center);
-        $('#btn-spin-toggle').show();
+        // $('#btn-spin-toggle').show();
         spinGlobe();
         map.setZoom(determineZoom());
 
@@ -824,11 +827,7 @@ function buildFilters() {
             $('#' + this.dataset.checkid).click();
             toggleFilter(this.dataset.checkid);
 
-            $('#spinner-container-filter').removeClass('d-none')
-            $('#spinner-container-filter').addClass('d-flex')
-
             filterData();
-
         });
     });
 
@@ -848,8 +847,6 @@ function selectAllFilter() {
         }
     });
 
-    $('#spinner-container-filter').removeClass('d-none')
-    $('#spinner-container-filter').addClass('d-flex')
 
     filterData();
 
@@ -864,9 +861,6 @@ function selectAllFilterSection(fieldRow) {
             toggleFilter(this.dataset.checkid);
         }
     });
-
-    $('#spinner-container-filter').removeClass('d-none')
-    $('#spinner-container-filter').addClass('d-flex')
 
     filterData();
 }
@@ -937,9 +931,14 @@ function countFilteredFeatures() {
     });
 }
 function filterData() {
+    // // show
+    $('#spinner-container').removeClass('d-none')
+    $('#spinner-container').addClass('d-flex')
+
     if (config.tiles) {
 
         filterTiles();
+     
     } else {
 
         filterGeoJSON();
@@ -1007,7 +1006,7 @@ function filterTiles() {
 
     if ($('#table-container').is(':visible')) {
         filterGeoJSON();
-        $('btn-spin-toggle').hide();
+        // $('btn-spin-toggle').hide();
 
     } else {
         map.on('idle', filterGeoJSON);
@@ -1079,6 +1078,9 @@ function filterGeoJSON() {
     }
 }
 function updateSummary() {
+    $('#spinner-container').addClass('d-none')
+    $('#spinner-container').removeClass('d-flex')   
+    console.log('Removed spinner') 
     $('#total_in_view').text(config.totalCount.toLocaleString())
     $('#summary').html("Total " + config.assetFullLabel + " selected");
     countFilteredFeatures();
@@ -1114,10 +1116,7 @@ function updateSummary() {
         }
     }
 
-    $('#spinner-container-filter').addClass('d-none')
-    $('#spinner-container-filter').removeClass('d-flex')
 }
-
 
 /*
   table view
@@ -1131,7 +1130,7 @@ function buildTable() {
             $('#sidebar').hide();
             $('#table-container').show();
             $('#basemap-toggle').hide();
-            $('btn-spin-toggle').hide();
+            // $('btn-spin-toggle').hide();
             $('#projection-toggle').hide();
             updateTable(true);
         } else {
@@ -1141,7 +1140,7 @@ function buildTable() {
             $('#sidebar').show();
             $('#table-container').hide();
             $('#basemap-toggle').show();
-            $('btn-spin-toggle').show();
+            // $('btn-spin-toggle').show();
             $('#projection-toggle').show();
 
         }
@@ -1556,8 +1555,7 @@ function buildCountrySelect() {
             config.selectedCountryText = this.dataset.countrytext;
             config.selectedCountries = (this.dataset.countries.length > 0 ? this.dataset.countries.split(";") : []);
             $('#selectedCountryLabel').text(config.selectedCountryText || "all");
-            $('#spinner-container-filter').removeClass('d-none')
-            $('#spinner-container-filter').addClass('d-flex')
+
             filterData();
         });
     });
@@ -1646,8 +1644,6 @@ function enableSearchSelect() {
             config.selectedSearchFields = this.dataset.searchfields;
             $('#selectedSearchLabel').text(this.dataset.searchfieldtext);
 
-            $('#spinner-container-filter').removeClass('d-none')
-            $('#spinner-container-filter').addClass('d-flex')
             filterData();
         });
     });
@@ -1683,11 +1679,6 @@ function enableResetAll() {
     //         toggleFilter(this.dataset.checkid);
     //     }
     // }); 
-
-    // start the spinner
-    $('#spinner-container-filter').removeClass('d-none')
-    $('#spinner-container-filter').addClass('d-flex')
-
     // then filter data
     filterData();
 
@@ -1790,7 +1781,7 @@ const secondsPerRevolution = 120;
 const maxSpinZoom = 5;
 // Rotate at intermediate speeds between zoom levels 3 and 5.
 const slowSpinZoom = 3;
-const btnSpinToggle = document.querySelector('#btn-spin-toggle');
+// const btnSpinToggle = document.querySelector('#btn-spin-toggle');
 
 
 let userInteracting = false;
@@ -1818,47 +1809,47 @@ function spinGlobe() {
     }
 }
 
-// Pause spinning on interaction
-map.on('mousedown', () => {
-    userInteracting = true;
-});
+// // Pause spinning on interaction
+// map.on('mousedown', () => {
+//     userInteracting = true;
+// });
 
-// Restart spinning the globe when interaction is complete
-map.on('mouseup', () => {
-    userInteracting = false;
-    spinGlobe();
-});
+// // Restart spinning the globe when interaction is complete
+// map.on('mouseup', () => {
+//     userInteracting = false;
+//     spinGlobe();
+// });
 
-// // These events account for cases where the mouse has moved
-// // off the map, so 'mouseup' will not be fired.
-map.on('dragend', () => {
-    userInteracting = false;
-    spinGlobe();
-});
-map.on('pitchend', () => {
-    userInteracting = false;
-    spinGlobe();
-});
-map.on('rotateend', () => {
-    userInteracting = false;
-    spinGlobe();
-});
+// // // These events account for cases where the mouse has moved
+// // // off the map, so 'mouseup' will not be fired.
+// map.on('dragend', () => {
+//     userInteracting = false;
+//     spinGlobe();
+// });
+// map.on('pitchend', () => {
+//     userInteracting = false;
+//     spinGlobe();
+// });
+// map.on('rotateend', () => {
+//     userInteracting = false;
+//     spinGlobe();
+// });
 
 // // When animation is complete, start spinning if there is no ongoing interaction
 map.on('moveend', () => {
     spinGlobe();
 });
 
-document.getElementById('btn-spin-toggle').addEventListener('click', (e) => {
-    spinEnabled = !spinEnabled;
-    if (spinEnabled) {
-        spinGlobe();
-        e.target.innerHTML = 'Pause rotation';
-    } else {
-        map.stop(); // Immediately end ongoing animation
-        e.target.innerHTML = 'Start rotation';
-    }
-});
+// document.getElementById('btn-spin-toggle').addEventListener('click', (e) => {
+//     spinEnabled = !spinEnabled;
+//     if (spinEnabled) {
+//         spinGlobe();
+//         e.target.innerHTML = 'Pause rotation';
+//     } else {
+//         map.stop(); // Immediately end ongoing animation
+//         e.target.innerHTML = 'Start rotation';
+//     }
+// });
 
 
 // # adding option to pause spin with space important for smaller screens
@@ -1866,12 +1857,13 @@ document.addEventListener('keydown', (e) => {
     spinEnabled = !spinEnabled;
     if (e.code === "Space") {
         if (spinEnabled) {
+            userInteracting = !userInteracting;
             spinGlobe();
-            btnSpinToggle.innerHTML = 'Pause rotation'; // not working not sure why
+            // btnSpinToggle.innerHTML = 'Pause rotation'; // not working not sure why
         } else {
             map.stop(); // Immediately end ongoing animation
             spinGlobe();
-            btnSpinToggle.innerHTML = 'Start rotation';
+            // btnSpinToggle.innerHTML = 'Start rotation';
         }
     }
 });
