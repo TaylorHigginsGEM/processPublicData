@@ -622,10 +622,11 @@ function addLineLayer() {
 
 function addEvents() {
     map.on('click', (e) => {
-        const bbox = [ [e.point.x - config.hitArea, e.point.y - config.hitArea], [e.point.x + config.hitArea, e.point.y + config.hitArea]];
-        const selectedFeatures = getUniqueFeatures(map.queryRenderedFeatures(bbox, {layers: config.layers}), config.linkField).sort((a, b) => a.properties[config.nameField].localeCompare(b.properties[config.nameField]));
         userInteracting = true;
         spinGlobe();
+        const bbox = [ [e.point.x - config.hitArea, e.point.y - config.hitArea], [e.point.x + config.hitArea, e.point.y + config.hitArea]];
+        const selectedFeatures = getUniqueFeatures(map.queryRenderedFeatures(bbox, {layers: config.layers}), config.linkField).sort((a, b) => a.properties[config.nameField].localeCompare(b.properties[config.nameField]));
+
 
         if (selectedFeatures.length == 0) return;
 
@@ -826,11 +827,7 @@ function buildFilters() {
             $('#' + this.dataset.checkid).click();
             toggleFilter(this.dataset.checkid);
 
-            $('#spinner-container-filter').removeClass('d-none')
-            $('#spinner-container-filter').addClass('d-flex')
-
             filterData();
-
         });
     });
 
@@ -850,8 +847,6 @@ function selectAllFilter() {
         }
     });
 
-    $('#spinner-container-filter').removeClass('d-none')
-    $('#spinner-container-filter').addClass('d-flex')
 
     filterData();
 
@@ -866,9 +861,6 @@ function selectAllFilterSection(fieldRow) {
             toggleFilter(this.dataset.checkid);
         }
     });
-
-    $('#spinner-container-filter').removeClass('d-none')
-    $('#spinner-container-filter').addClass('d-flex')
 
     filterData();
 }
@@ -939,9 +931,14 @@ function countFilteredFeatures() {
     });
 }
 function filterData() {
+    // // show
+    $('#spinner-container').removeClass('d-none')
+    $('#spinner-container').addClass('d-flex')
+
     if (config.tiles) {
 
         filterTiles();
+     
     } else {
 
         filterGeoJSON();
@@ -1081,6 +1078,9 @@ function filterGeoJSON() {
     }
 }
 function updateSummary() {
+    $('#spinner-container').addClass('d-none')
+    $('#spinner-container').removeClass('d-flex')   
+    console.log('Removed spinner') 
     $('#total_in_view').text(config.totalCount.toLocaleString())
     $('#summary').html("Total " + config.assetFullLabel + " selected");
     countFilteredFeatures();
@@ -1116,10 +1116,7 @@ function updateSummary() {
         }
     }
 
-    $('#spinner-container-filter').addClass('d-none')
-    $('#spinner-container-filter').removeClass('d-flex')
 }
-
 
 /*
   table view
@@ -1558,8 +1555,7 @@ function buildCountrySelect() {
             config.selectedCountryText = this.dataset.countrytext;
             config.selectedCountries = (this.dataset.countries.length > 0 ? this.dataset.countries.split(";") : []);
             $('#selectedCountryLabel').text(config.selectedCountryText || "all");
-            $('#spinner-container-filter').removeClass('d-none')
-            $('#spinner-container-filter').addClass('d-flex')
+
             filterData();
         });
     });
@@ -1648,8 +1644,6 @@ function enableSearchSelect() {
             config.selectedSearchFields = this.dataset.searchfields;
             $('#selectedSearchLabel').text(this.dataset.searchfieldtext);
 
-            $('#spinner-container-filter').removeClass('d-none')
-            $('#spinner-container-filter').addClass('d-flex')
             filterData();
         });
     });
@@ -1685,11 +1679,6 @@ function enableResetAll() {
     //         toggleFilter(this.dataset.checkid);
     //     }
     // }); 
-
-    // start the spinner
-    $('#spinner-container-filter').removeClass('d-none')
-    $('#spinner-container-filter').addClass('d-flex')
-
     // then filter data
     filterData();
 
