@@ -114,7 +114,7 @@ var config = {
     detailView: {
         'name': {'display': 'heading'},
         'plant-type': {'label': 'Plant Type'},
-        'prod-type': {'label': 'Cement Type'},
+        'prod-type': {'label': 'Production Type'},
         'Cement Capacity (millions metric tonnes per annum)': {'label': 'Cement Capacity (millions metric tonnes per annum)'},
         'Clinker Capacity (millions metric tonnes per annum)': {'label': 'Clinker Capacity (millions metric tonnes per annum)'},
         'color': {'label': 'Cement Color'},
