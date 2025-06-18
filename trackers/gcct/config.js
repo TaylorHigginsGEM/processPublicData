@@ -1,5 +1,5 @@
 var config = {
-    geojson: 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-05-30.geojson', // Saying can't be found? TODO march 24th
+    geojson: 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-18.geojson', // Saying can't be found? TODO march 24th
 
     colors: {
         'light red': '#f28b82',
@@ -19,12 +19,12 @@ var config = {
     color: { 
         field: 'status', // prod type
         values: {
-            'announced': 'red',
-            'construction': 'red',
-            'operating': 'red',
+            'announced': 'orange',
+            'construction': 'orange',
+            'operating': 'green',
             'operating-pre-retirement': 'green',
-            'cancelled': 'green',
-            'retired': 'green',
+            'cancelled': 'red',
+            'retired': 'red',
             'mothballed': 'blue',
             'unknown': 'black'
         },
@@ -40,13 +40,13 @@ var config = {
         {
             field: 'plant-type',
             label: 'Plant type',
-            values: ['clinker only', 'grinding', 'integrated', ''],
+            values: ['clinker-only', 'grinding', 'integrated', '-'],
             values_labels: ['Clinker only', 'Grinding', 'Integrated', 'Not found']
         },
         {
             field: 'prod-type',
             label: 'Production type',
-            values: ['dry', 'mixed', 'semidry', 'wet', '', 'n/a'],
+            values: ['dry', 'mixed', 'semidry', 'wet', '-', 'n/a'],
             values_labels: ['Dry', 'Mixed', 'Semi-dry', 'Wet', 'Not found', 'N/A']
         },
         {
@@ -113,7 +113,8 @@ var config = {
    
     detailView: {
         'name': {'display': 'heading'},
-        'prod-type': {'label': 'Production Type'},
+        'plant-type': {'label': 'Plant Type'},
+        'prod-type': {'label': 'Cement Type'},
         'Cement Capacity (millions metric tonnes per annum)': {'label': 'Cement Capacity (millions metric tonnes per annum)'},
         'Clinker Capacity (millions metric tonnes per annum)': {'label': 'Clinker Capacity (millions metric tonnes per annum)'},
         'color': {'label': 'Cement Color'},
