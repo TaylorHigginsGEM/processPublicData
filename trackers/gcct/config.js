@@ -1,6 +1,6 @@
 var config = {
-    geojson: 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-18.geojson', // Saying can't be found? TODO march 24th
-
+    geojson:  'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-05-30.geojson',// 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-18.geojson', // Saying can't be found? TODO march 24th
+//  gem_tracker_maps/trackers/gcct/compilation_output/gcct_map_2025-05-30.geojson
     colors: {
         'light red': '#f28b82',
         'red': '#c74a48',
@@ -40,20 +40,20 @@ var config = {
         {
             field: 'plant-type',
             label: 'Plant type',
-            values: ['clinker-only', 'grinding', 'integrated', '-'],
+            values: ['clinker only', 'grinding', 'integrated', ''],
             values_labels: ['Clinker only', 'Grinding', 'Integrated', 'Not found']
         },
         {
             field: 'prod-type',
-            label: 'Production type',
-            values: ['dry', 'mixed', 'semidry', 'wet', '-', 'n/a'],
-            values_labels: ['Dry', 'Mixed', 'Semi-dry', 'Wet', 'Not found', 'N/A']
+            label: 'Clinker Production Method',
+            values: ['dry', 'mixed', 'semidry', 'wet', '', 'n/a'],
+            values_labels: ['Dry', 'Mixed', 'Semi-dry', 'Wet', 'Not found', 'N/A (Grinding Plants)']
         },
         {
             field: 'color',
             label: 'Color',
             values: ['both', 'grey', 'white', ''],
-            values_labels: ['Both', 'Grey', 'White', 'Not found']
+            values_labels: ['Grey & White', 'Grey', 'White', 'Not found']
         }
         ],
 
@@ -112,6 +112,7 @@ var config = {
     */
    
     detailView: {
+        // ned to add cement type but unsure what that is in the data
         'name': {'display': 'heading'},
         'plant-type': {'label': 'Plant Type'},
         'prod-type': {'label': 'Production Type'},

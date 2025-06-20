@@ -180,7 +180,7 @@ function addTiles() {
     map.addSource('assets-source', {
         'type': 'vector',
         'tiles': config.tiles,
-        'minzoom': 0,
+        'minzoom': 1,
         'maxzoom': 10 // ?
     });
 
