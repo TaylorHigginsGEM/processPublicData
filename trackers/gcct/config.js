@@ -1,5 +1,5 @@
 var config = {
-    geojson:  'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-05-30.geojson',// 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-18.geojson', // Saying can't be found? TODO march 24th
+    geojson:  'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-20.geojson',// 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-18.geojson', // Saying can't be found? TODO march 24th
 //  gem_tracker_maps/trackers/gcct/compilation_output/gcct_map_2025-05-30.geojson
     colors: {
         'light red': '#f28b82',
@@ -34,7 +34,7 @@ var config = {
             field: 'status',
             label: 'Status',
             values: ['announced', 'construction', 'operating', 'operating-pre-retirement', 'cancelled', 'retired', 'mothballed', 'unknown'],
-            values_labels: ['Announced', 'Construction', 'Operating', 'Operating Pre-Retirement', 'Cancelled', 'Retired', 'Mothballed', 'Unknown'],
+            values_labels: ['Announced', 'Construction', 'Operating', 'Operating Pre-Retirement', 'Cancelled', 'Retired', 'Mothballed', 'Not Found'],
             primary: true
         },
         {
@@ -118,6 +118,7 @@ var config = {
         'prod-type': {'label': 'Production Type'},
         'Cement Capacity (millions metric tonnes per annum)': {'label': 'Cement Capacity (millions metric tonnes per annum)'},
         'Clinker Capacity (millions metric tonnes per annum)': {'label': 'Clinker Capacity (millions metric tonnes per annum)'},
+        'cem-type': {'label': 'Cement Type'},
         'color': {'label': 'Cement Color'},
         'owner': {'label': 'Owner'},
         'start_year': {'label': 'Start date'},
