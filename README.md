@@ -58,6 +58,8 @@ IDE set up
     --simplified = False # True False
     --priority = [''] # allows you to prioritize global, regional or internal output files
 
+- If you have a new tracker to set up, add to the renaming_cols_dict in all_config.py and add net new columns to final_cols, currently you may want to run the script and check the final names first, since the js map code requires certain formatting, so the dictioanry renaming_cols_dict may not be the final col name
+
 Important files to run after non IDE and IDE setup
 - in root run ```python run_maps.py```
     -- make_metadata.py
