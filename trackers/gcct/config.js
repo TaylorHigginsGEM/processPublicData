@@ -51,7 +51,7 @@ var config = {
         },
         {
             field: 'color',
-            label: 'Color',
+            label: 'Cement Color',
             values: ['both', 'grey', 'white', ''],
             values_labels: ['Grey & White', 'Grey', 'White', 'Not found']
         }
