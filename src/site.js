@@ -1450,10 +1450,17 @@ function displayDetails(features) {
 // assign color if equal to status field BUT ignore the capacity part when no capacity label
 // here is where we can lowercase status so it matches other info in popup since there is no special table here
         else {
-        // add status part not capacity part 
-        detail_text += '<span class="fw-bold text-capitalize">Status</span>: ' +
-        '<span class="legend-dot" style="background-color:' + config.color.values[features[0].properties[config.statusDisplayField]] + '"></span><span class="text-lowercase">' + features[0].properties[config.statusDisplayField] + '</span><br/>';
-        // detail_text += '';
+            // handle for statuses that have needless hyphens when / if not handled in preprocessing with statusDisplay column
+            if (features[0].properties[config.statusDisplayField] === 'operating-pre-retirement') {
+                statusEdited = features[0].properties[config.statusDisplayField].replace('operating-pre-retirement', 'Operating Pre-Retirement')
+                detail_text += '<span class="fw-bold text-capitalize">Status</span>: ' +
+                '<span class="legend-dot" style="background-color:' + config.color.values[features[0].properties[config.statusDisplayField]] + '"></span><span class="text-lowercase">' + statusEdited + '</span><br/>';
+            }
+            else {
+                // add status part not capacity part 
+                detail_text += '<span class="fw-bold text-capitalize">Status</span>: ' +
+                '<span class="legend-dot" style="background-color:' + config.color.values[features[0].properties[config.statusDisplayField]] + '"></span><span class="text-lowercase">' + features[0].properties[config.statusDisplayField] + '</span><br/>';
+            }
         }
     }
     //Location by azizah from <a href="https://thenounproject.com/browse/icons/term/location/" target="_blank" title="Location Icons">Noun Project</a> (CC BY 3.0)
