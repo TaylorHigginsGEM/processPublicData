@@ -1,5 +1,5 @@
 var config = {
-    geojson: 'compilation_output/gist_map_2025-07-17.geojson', 
+    geojson: 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/gist/2025-07/gist_map_2025-07-17.geojson', 
     colors: {
         'light red': '#f28b82',
         'red': '#c74a48',
@@ -48,8 +48,9 @@ var config = {
             // values-labels: ['Electric arc furnaces', 'Basic oxygen furnaces', 'Open hearth furnaces', 'Blast furnaces', 'DRI furnaces'],
             primary: true
         },
+        // do not use status-legend since it is for multi tracker maps
         {
-            field: 'plant-status',
+            field: 'status',
             label: 'Plant Status',
             values: ['announced', 'cancelled', 'construction', 'mothballed', 'operating', 'operating-pre-retirement', 'retired'], //'mothballed-pre-retirement',
             values_labels: ['Announced', 'Cancelled', 'Construction', 'Mothballed', 'Operating', 'Operating Pre-Retirement', 'Retired'] // 'Mothballed Pre-Retirement', 
@@ -60,8 +61,8 @@ var config = {
     // lat:'Latitude',
     // lng: 'Longitude',
     urlField: 'url',
-    statusField: 'plant-status',
-    statusDisplayField: 'status_display',
+    statusField: 'status',
+    statusDisplayField: 'status',
     countryField: 'areas',
     capacityField: 'scaling-capacity', // change to scaling col once added
     // capacityDisplayField: 'current-capacity-(ttpa)',
@@ -88,19 +89,20 @@ var config = {
     /* configure the table view, selecting which columns to show, how to label them, 
         and designated which column has the link */
     tableHeaders: {
-        values: ['name','owner', 'parent', 'status_display', 'start-year','prod-method-tier','main-production-equipment', 'subnat','areas'],
+        values: ['name','owner', 'parent', 'status-display', 'start-year','prod-method-tier-display','main-production-equipment', 'subnat','areas'],
         labels: ['Plant','Owner','Parent', 'Plant Status', 'Start date', 'Production Method','Main Production Equipment','Subnational Unit','Country/Area'],
         clickColumns: ['name'],
         rightAlign: [],
         toLocaleString: ['capacity'], // not displayed
+        removeLastComma: ['areas']
 
     },
 
     /* configure the search box; 
         each label has a value with the list of fields to search. Multiple fields might be searched */
-    searchFields: { 'Plant': ['name', 'noneng-name', 'other-plant-names-(english)', 'other-plant-names-(other-language)'], 
-        'Companies': ['owner', 'parent', 'noneng-owner'],
-        // 'Production Method': ['prod-method-tier-display', 'prod-method-tier','main-production-equipment']
+    searchFields: { 'Plant': ['name', 'noneng-name'], 
+        'Companies': ['owner', 'parent', 'noneng-owner', 'parent_gem_id', 'owner_gem_id'],
+        'Production Method': ['prod-method-tier-display', 'prod-method-tier'] //'main-production-equipment'
     },
 
     /* define fields and how they are displayed. 
@@ -112,7 +114,7 @@ var config = {
     */
     detailView: {
         'name': {'display': 'heading'},
-        'prod-method-tier': {'label': 'Production Method'},
+        'prod-method-tier-display': {'label': 'Production Method'},
         'parent': {'label': 'Parent'},
         'owner': {'label': 'Owner'},
         'start-year': {'label': 'Start date'},
@@ -122,41 +124,34 @@ var config = {
         'announced-nominal-dri-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced DRI capacity (ttpa)'},
         'announced-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced EAF steel capacity (ttpa)'},
         'announced-other/unspecified-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced other/unspecified steel capacity (ttpa)'},
-        // 5 cancelled 
         'cancelled-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Cancelled BF capacity (ttpa)'},
         'cancelled-nominal-bof-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Cancelled BOF steel capacity (ttpa)'},
         'cancelled-nominal-dri-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Cancelled DRI capacity (ttpa)'},
         'cancelled-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Cancelled EAF steel capacity (ttpa)'},
         'cancelled-other/unspecified-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Cancelled other/unspecified steel capacity (ttpa)'},
-        // 5 construction
         'construction-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Construction BF capacity (ttpa)'},
         'construction-nominal-bof-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Construction BOF steel capacity (ttpa)'},
         'construction-nominal-dri-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Construction DRI capacity (ttpa)'},
         'construction-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Construction EAF steel capacity (ttpa)'},
         'construction-other/unspecified-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Construction other/unspecified steel capacity (ttpa)'},
-        // 6 moth 
         'mothballed-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Mothballed BF capacity (ttpa)'},
         'mothballed-nominal-bof-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Mothballed BOF steel capacity (ttpa)'},
         'mothballed-nominal-dri-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Mothballed DRI capacity (ttpa)'},
         'mothballed-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Mothballed EAF steel capacity (ttpa)'},
         'mothballed-nominal-ohf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Mothballed OHF steel capacity (ttpa)'},
         'mothballed-other/unspecified-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Mothballed other/unspecified steel capacity (ttpa)'},
-        //1  Mothballed pre-retirement
         'mothballed-pre-retirement-nominal-bf-capacity-(ttpa)':{'display': 'gist-unit-level','label': 'Mothballed pre-retirement BF capacity (ttpa)'},
-        // 6 oper
         'operating-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating BF capacity (ttpa)'},
         'operating-nominal-bof-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating BOF steel capacity (ttpa)'},
         'operating-nominal-dri-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating DRI capacity (ttpa)'},
         'operating-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating EAF steel capacity (ttpa)'},
         'operating-nominal-ohf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating OHF steel capacity (ttpa)'},
         'operating-other/unspecified-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating other/unspecified steel capacity (ttpa)'},
-        // 5 pre ret 
         'operating-pre-retirement-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label':'Operating pre-retirement BF capacity (ttpa)'},
         'operating-pre-retirement-nominal-bof-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating pre-retirement BOF steel capacity (ttpa)'},
         'operating-pre-retirement-nominal-dri-capacity-(ttpa)' :{'display': 'gist-unit-level','label':'Operating pre-retirement DRI capacity (ttpa)'},
         'operating-pre-retirement-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating pre-retirement EAF steel capacity (ttpa)'},
         'operating-pre-retirement-other/unspecified-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Operating pre-retirement other/unspecified steel capacity (ttpa)'},
-        // 4 retired
         'retired-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Retired BF capacity (ttpa)'},
         'retired-nominal-bof-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Retired BOF steel capacity (ttpa)'},
         'retired-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Retired EAF steel capacity (ttpa)'},

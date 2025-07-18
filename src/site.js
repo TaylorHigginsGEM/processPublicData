@@ -1278,7 +1278,7 @@ function buildGistTable(all_details_gist) {
                 prodMethod = match[1].trim().replace('steel', '');
                 capacity = match[2].replace(/,/g, '');
             }
-            tableHtml += `<tr><td>${status}</td><td>${prodMethod}</td><td>${capacity}</td></tr>`;
+            tableHtml += `<tr><td>${status}</td><td>${prodMethod}</td><td>${Number(capacity).toLocaleString()}</td></tr>`;
         });
     });
     tableHtml += '</tbody></table>';
