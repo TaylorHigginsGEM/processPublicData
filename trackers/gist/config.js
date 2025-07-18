@@ -62,7 +62,7 @@ var config = {
     // lng: 'Longitude',
     urlField: 'url',
     statusField: 'status',
-    statusDisplayField: 'status',
+    statusDisplayField: 'status-display',
     countryField: 'areas',
     capacityField: 'scaling-capacity', // change to scaling col once added
     // capacityDisplayField: 'current-capacity-(ttpa)',
