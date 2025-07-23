@@ -12,7 +12,7 @@ function processConfig() {
 
 /*
   Set up mapboxgljs instance, and trigger data load
-*/
+*/ 
 mapboxgl.accessToken = config.accessToken;
 const map = new mapboxgl.Map({
     container: 'map',
@@ -138,6 +138,7 @@ function addGeoJSON(jsonData) {
             }
             if (feature.properties[config['countryField']]){
                 config.geojson.features.push(feature);
+                console.log(feature);
             }
             else {
                 console.log(feature)
@@ -477,20 +478,24 @@ function addPointLayer() {
 // ["exponential", base] if base is 1 then it is linear the same, power of 1/2 to do squareroot area based
 
     let interpolateExpression = ('interpolate' in config ) ? config.interpolate :  ["linear"];
-    paint['circle-radius'] = [
-        "interpolate", ["exponential", .5], ["zoom"],
-        1, ["interpolate", interpolateExpression,
-            ["to-number",["get", config.capacityField]],
-            config.minPointCapacity, config.minRadius,
-            config.maxPointCapacity, config.maxRadius
-        ],
-        10, ["interpolate", interpolateExpression,
-            ["to-number",["get", config.capacityField]],
-            config.minPointCapacity, config.highZoomMinRadius,
-            config.maxPointCapacity, config.highZoomMaxRadius
-        ],
-
-    ];
+    try {
+        paint['circle-radius'] = [
+            "interpolate", ["exponential", .5], ["zoom"],
+            1, ["interpolate", interpolateExpression,
+                ["to-number",["get", config.capacityField]],
+                config.minPointCapacity, config.minRadius,
+                config.maxPointCapacity, config.maxRadius
+            ],
+            10, ["interpolate", interpolateExpression,
+                ["to-number",["get", config.capacityField]],
+                config.minPointCapacity, config.highZoomMinRadius,
+                config.maxPointCapacity, config.highZoomMaxRadius
+            ],
+        ];
+    } catch (e) {
+        console.error("Error setting circle-radius. config.capacityField:", config.capacityField);
+        throw e;
+    }
 
     
     map.addLayer({
@@ -1250,101 +1255,179 @@ function setHighlightFilter(links) {
     });
 }
 
+
+// Move the table creation logic into a helper function
+function buildGistTable(all_details_gist) {
+    // Only build the table if there is data
+    if (!all_details_gist || Object.keys(all_details_gist).length === 0) return '';
+    let tableHtml = '<br/>';
+    tableHtml += '<table class="table table-sm table-bordered" style="font-size: 0.75rem;"><thead><tr>' +
+        '<th style="text-transform: none; font-size: 0.7rem;">Unit Status</th>' +
+        '<th style="text-transform: none; font-size: 0.7rem;">Main Production Equipment</th>' +
+        '<th style="text-transform: none; font-size: 0.7rem;">Capacity (ttpa)</th>' +
+        '</tr></thead><tbody>';
+    Object.entries(all_details_gist).forEach(([status, tuples]) => {
+        tuples.forEach(tupleLike => {
+            // extract production method and capacity from tupleLike string
+            // Assume format: "prod method "capacity (ttpa)" capacity"
+            let prodMethod = tupleLike;
+            let capacity = '';
+            // prod method is all before "capacity (ttpa)" minus steel and capacity is all after
+            let match = tupleLike.match(/(.+?)\s*capacity\s*\(ttpa\)\s*(.*)/i);
+            if (match) {
+                prodMethod = match[1].trim().replace('steel', '');
+                capacity = match[2].replace(/,/g, '');
+            }
+            tableHtml += `<tr><td>${status}</td><td>${prodMethod}</td><td>${Number(capacity).toLocaleString()}</td></tr>`;
+        });
+    });
+    tableHtml += '</tbody></table>';
+    return tableHtml;
+}
+
+
 function displayDetails(features) {
     if (typeof features == "string") {
         features = JSON.parse(features);
     }
     var detail_text = '';
     var location_text = '';
+    let all_details_gist = [];
+
     Object.keys(config.detailView).forEach((detail) => {
     // replace apostrophe in displayDetails to resolve invalid or unexpected token
         if (features[0].properties[detail] == "" || features[0].properties[detail] == 'unknown' || features[0].properties[detail] == 'undefined' || features[0].properties[detail] ==0 || features[0].properties[detail] == NaN || features[0].properties[detail] == 'nan' || features[0].properties[detail] == null){
             detail_text += ''
-            } else if (Object.keys(config.detailView[detail]).includes('display')) {
+        } else if (Object.keys(config.detailView[detail]).includes('display')) {
 
-                if (config.detailView[detail]['display'] == 'heading') {
-                    detail_text += '<h4>' + features[0].properties[detail] + '</h4>';
+            if (config.detailView[detail]['display'] == 'heading') {
+                detail_text += '<h4>' + features[0].properties[detail] + '</h4>';
 
-                } else if (config.detailView[detail]['display'] == 'join') {
+            } else if (config.detailView[detail]['display'] == 'join') {
 
-                    let join_array = features.map((feature) => feature.properties[detail]);
-                    join_array = join_array.filter((value, index, array) => array.indexOf(value) === index);
-                    if (join_array.length > 1) {
-                        if (Object.keys(config.detailView[detail]).includes('label')) {
-                            detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'][1] + '</span>: ';
-                        }
-                        detail_text += '<span class="text-capitalize">' + join_array.join(',').replaceAll('_',' ') + '</span><br/>';
+                let join_array = features.map((feature) => feature.properties[detail]);
+                join_array = join_array.filter((value, index, array) => array.indexOf(value) === index);
+                if (join_array.length > 1) {
+                    if (Object.keys(config.detailView[detail]).includes('label')) {
+                        detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'][1] + '</span>: ';
+                    }
+                    detail_text += '<span class="text-capitalize">' + join_array.join(',').replaceAll('_',' ') + '</span><br/>';
+                } else {
+                    if (Object.keys(config.detailView[detail]).includes('label')) {
+                        detail_text += '<span class="fw-bold">' +config.detailView[detail]['label'][0] + '</span>: ';
+                    }
+                    detail_text += '<span class="text-capitalize">' + join_array[0].replaceAll('_',' ') + '</span><br/>';;
+                }
+
+            } else if (config.detailView[detail]['display'] == 'range') {
+
+                let greatest = features.reduce((accumulator, feature) => {
+                        return (feature.properties[detail] != '' && feature.properties[detail] > accumulator ?  feature.properties[detail] : accumulator);
+                    },
+                    0
+                ); 
+                let least = features.reduce((accumulator, feature) => {
+                        return (feature.properties[detail] != '' && feature.properties[detail] < accumulator ?  feature.properties[detail] : accumulator);
+                    },
+                    5000
+                );
+                if (least != 5000) {
+                    if (least == greatest) {
+                        detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'][0] + '</span>: ' + least.toString() + '<br/>';
                     } else {
-                        if (Object.keys(config.detailView[detail]).includes('label')) {
-                            detail_text += '<span class="fw-bold">' +config.detailView[detail]['label'][0] + '</span>: ';
+                        detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'][1] + '</span>: ' + least.toString() + ' - ' + greatest.toString() + '<br/>';          
+                    }
+                }
+            } else if (config.detailView[detail]['display'] == 'hyperlink') {
+
+                // detail_text += '<span class="fw-bold">' + 'Infrastructure Wiki' + '</span>: ' + '<a href="' + features[0].properties[detail] + '" target="_blank"></a><br/>';
+                detail_text += '<br/><a href="' + features[0].properties[detail] + '" target="_blank">More Info on the related infrastructure project here</a><br/>';
+            
+            } else if (config.detailView[detail]['display'] == 'location') {
+
+                if (Object.keys(features[0].properties).includes(detail)) {
+                    if (location_text.length > 0) {
+                        location_text += ', ';
+                    }
+
+                    location_text += features[0].properties[detail];
+                }
+            } else if (config.detailView[detail]['display'] == 'colorcoded'){
+                // let's do it so that if it has this then it goes to the color dictionary and matches up the field name, uses fieldLabel to display label and then also uses color
+                // to create the circle dot we have for most status 
+                let colorLabel = features.map((feature) => feature.properties[detail]);
+                // console.log(config.color.fieldLabel)
+                detail_text += '<span class="fw-bold">' + config.color.fieldLabel + '</span>: ' +
+                '<span class="legend-dot" style="background-color:' + config.color.values[ features[0].properties[config.color.field] ]
+                + '"></span><span class="text-capitalize">' + features[0].properties[config.color.field] + '</span><br/>';
+                console.log([ features[0].properties[config.color.field] ])   
+            }                 
+            else if (config.detailView[detail]['display'] == 'gist-unit-level'){
+
+                // cycle through all of them to only group them if there is value there 
+                if (features[0].properties[detail] === 0 && features[0].properties[detail] === 0.0){
+                    console.log('0 so returning')
+                    // skip to next iteration in a Object.keys(config.detailView).forEach((detail) => {
+                    return;
+                } else {
+
+                    // Define the status types you want to check
+                    const statusTypes = [
+                        'Operating',
+                        'Operating pre-retirement',
+                        'Announced',
+                        'Construction',
+                        'Retired',
+                        'Cancelled',
+                        'Mothballed'
+                    ];
+
+                    statusTypes.forEach(status => {
+                        if (
+                            status === 'Operating' &&
+                            config.detailView[detail]['label'].includes('Operating pre-retirement')
+                        ) {
+                            // Skip to avoid false 'Operating' match
+                            return;
                         }
-                        detail_text += '<span class="text-capitalize">' + join_array[0].replaceAll('_',' ') + '</span><br/>';;
-                    }
-
-                } else if (config.detailView[detail]['display'] == 'range') {
-
-                    let greatest = features.reduce((accumulator, feature) => {
-                            return (feature.properties[detail] != '' && feature.properties[detail] > accumulator ?  feature.properties[detail] : accumulator);
-                        },
-                        0
-                    ); 
-                    let least = features.reduce((accumulator, feature) => {
-                            return (feature.properties[detail] != '' && feature.properties[detail] < accumulator ?  feature.properties[detail] : accumulator);
-                        },
-                        5000
-                    );
-                    if (least != 5000) {
-                        if (least == greatest) {
-                            detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'][0] + '</span>: ' + least.toString() + '<br/>';
-                        } else {
-                            detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'][1] + '</span>: ' + least.toString() + ' - ' + greatest.toString() + '<br/>';          
+                        else if (config.detailView[detail]['label'].includes(status)) {
+                            // Remove the status from the label to get the "newLabel"
+                            let newLabel = config.detailView[detail]['label'].replace(status, '').trim();
+                            // Compose the tupleLike value
+                            let tupleLike = newLabel + features[0].properties[detail];
+                            // Add to the all_gist_details object under the status key
+                            if (!all_details_gist[status]) {
+                                all_details_gist[status] = [];
+                            }
+                            all_details_gist[status].push(tupleLike);
                         }
-                    }
-                } else if (config.detailView[detail]['display'] == 'hyperlink') {
+                    });
 
-                    // detail_text += '<span class="fw-bold">' + 'Infrastructure Wiki' + '</span>: ' + '<a href="' + features[0].properties[detail] + '" target="_blank"></a><br/>';
-                    detail_text += '<br/><a href="' + features[0].properties[detail] + '" target="_blank">More Info on the related infrastructure project here</a><br/>';
-                
-                } else if (config.detailView[detail]['display'] == 'location') {
+                }
+            }
 
-                    if (Object.keys(features[0].properties).includes(detail)) {
-                        if (location_text.length > 0) {
-                            location_text += ', ';
-                        }
-
-                        location_text += features[0].properties[detail];
-                    }
-                } else if (config.detailView[detail]['display'] == 'colorcoded'){
-                    // let's do it so that if it has this then it goes to the color dictionary and matches up the field name, uses fieldLabel to display label and then also uses color
-                    // to create the circle dot we have for most status 
-                    let colorLabel = features.map((feature) => feature.properties[detail]);
-                    // console.log(config.color.fieldLabel)
-                    detail_text += '<span class="fw-bold">' + config.color.fieldLabel + '</span>: ' +
-                    '<span class="legend-dot" style="background-color:' + config.color.values[ features[0].properties[config.color.field] ]
-                    + '"></span><span class="text-capitalize">' + features[0].properties[config.color.field] + '</span><br/>';
-                    console.log([ features[0].properties[config.color.field] ])                    
-                    }
         } else {
             if (features[0].properties[detail] != "" && features[0].properties[detail] != 'undefined' && features[0].properties[detail] !=0 && features[0].properties[detail] != NaN && features[0].properties[detail] != 'nan' && features[0].properties[detail] != null && features[0].properties[detail] != 'Unknown [unknown %]' && features[0].properties[detail] != 'unknown') {
                 if (config.multiCountry == true && config.detailView[detail] && config.detailView[detail]['label'] && config.detailView[detail]['label'].includes('Country')) {
                     detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'] + '</span>: ' + removeLastComma(features[0].properties[detail]) + '<br/>';
                 }
 
-                else if (Object.keys(config.detailView[detail]).includes('label')) { // and color config add the dot
-                    detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'] + '</span>: ' + features[0].properties[detail] + '<br/>';
-                }
-                else if (Object.keys(config.detailView[detail]).includes('label')) {
-                    detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'] + '</span>: ' + features[0].properties[detail] + '<br/>';
-                } else {
-                    console.log(features[0].properties[detail])
-                    // detail_text += features[0].properties[detail] + '<br/>';
-                }
-            }
+                        else if (Object.keys(config.detailView[detail]).includes('label')) { // and color config add the dot
+                            detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'] + '</span>: ' + features[0].properties[detail] + '<br/>';
+                        }
+                        else if (Object.keys(config.detailView[detail]).includes('label')) {
+                            detail_text += '<span class="fw-bold">' + config.detailView[detail]['label'] + '</span>: ' + features[0].properties[detail] + '<br/>';
+                        } else {
+                            console.log(features[0].properties[detail])
+                            // detail_text += features[0].properties[detail] + '<br/>';
+                        }
+                    }
             else {
                 console.log(features[0].properties[detail])
 
             }
         }
+
     });
 
     let assetLabel = typeof config.assetLabel === 'string'
@@ -1356,7 +1439,7 @@ function displayDetails(features) {
         : config.capacityLabel.values[features[0].properties[config.capacityLabel.field]];
 
     // Need this to be customizable for trackers that do not need summary because no units 
-    // Build capacity summary
+    // Build capacity summary by unit
     // Make sure capacity and () get removed if there is only one feature
     if (capacityLabel != ''){
         if (features.length > 1) { 
@@ -1442,7 +1525,10 @@ function displayDetails(features) {
     // we should use the primary tag in config to color code the type for integrated
     else {
     // do nothing if color not equal to status field AND there is no capacity label
-        if (config.color.field != config.statusDisplayField){
+        if (config.gistUnit == true) {
+            detail_text += buildGistTable(all_details_gist);
+        
+        } else if (config.color.field != config.statusDisplayField){
             // detail_text += '<span class="fw-bold text-capitalize">Status</span>: ' +
             // '<span class="text-capitalize">' + features[0].properties[config.statusDisplayField] + '</span><br/>';
             detail_text += '';
@@ -1480,6 +1566,7 @@ function displayDetails(features) {
 
     setHighlightFilter(features[0].properties[config.linkField]);
 }
+
 function buildSatImage(features) {
     let location_arg = '';
     let bbox = geoJSONBBox({'type': 'FeatureCollection', features: features });
