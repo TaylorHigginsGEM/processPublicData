@@ -1,5 +1,5 @@
 var config = {
-    geojson:  'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-20.geojson',// 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-18.geojson', // Saying can't be found? TODO march 24th
+    geojson:  'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/gcct/2025-07/gcct_map_2025-07-15.geojson',// 'https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/mapfiles/gcct_map_2025-06-18.geojson', // Saying can't be found? TODO march 24th
 //  gem_tracker_maps/trackers/gcct/compilation_output/gcct_map_2025-05-30.geojson
     colors: {
         'light red': '#f28b82',
@@ -51,7 +51,7 @@ var config = {
         },
         {
             field: 'color',
-            label: 'Color',
+            label: 'Cement Color',
             values: ['both', 'grey', 'white', ''],
             values_labels: ['Grey & White', 'Grey', 'White', 'Not found']
         }
@@ -84,11 +84,11 @@ var config = {
     nameField: 'name',
 
     
-    /* configure the table view, selecting which columns to show, how to label them, 
+    /* configure the table view, selecting which columns to show, how to label them,
         and designated which column has the link */
     tableHeaders: {
         values: ['name','owner', 'status', 'Cement-Capacity-(millions-metric-tonnes-per-annum)', 'start-year','plant-type','prod-type', 'subnat','areas'],
-        labels: ['Project','Owner','Status', 'Cement Capacity (millions metric tonnes per annum)', 'Start date', 'Plant type', 'Production type','Subnational Unit','Country/Area'],
+        labels: ['Project','Owner','Status', 'Cement Capacity (mmtpa)', 'Start date', 'Plant type', 'Production type','Subnational Unit','Country/Area'],
         clickColumns: ['name'],
         rightAlign: [],
         removeLastComma: ['areas'], 
@@ -116,8 +116,8 @@ var config = {
         'name': {'display': 'heading'},
         'plant-type': {'label': 'Plant Type'},
         'prod-type': {'label': 'Production Type'},
-        'Cement Capacity (millions metric tonnes per annum)': {'label': 'Cement Capacity (millions metric tonnes per annum)'},
-        'Clinker Capacity (millions metric tonnes per annum)': {'label': 'Clinker Capacity (millions metric tonnes per annum)'},
+        'Cement-Capacity-(millions-metric-tonnes-per-annum)': {'label': 'Cement Capacity (mmtpa)'},
+        'Clinker-Capacity-(millions-metric-tonnes-per-annum)': {'label': 'Clinker Capacity (mmtpa)'},
         'cem-type': {'label': 'Cement Type'},
         'color': {'label': 'Cement Color'},
         'owner': {'label': 'Owner'},
