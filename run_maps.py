@@ -512,32 +512,15 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         # subprocess.run(["python", "/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/trackers/multi_tracker_maps_script.py"])                 
     
     elif tracker == 'Coal Plants':
-        # continue for all of them that are in or not in multi tracker maps
-        test_results_folder = f'{tracker_folder_path}coal-plant/test_results/'
 
-        output_folder = f'{tracker_folder_path}coal-plant/compilation_output/'
-        
-        os.makedirs(test_results_folder, exist_ok=True)
-        os.makedirs(output_folder, exist_ok=True)       
-             
+        map_obj_list, problem_map_objs = make_data_dwnlds(tracker)
 
         # creates single map file
-        key, tabs = get_key_tabs_prep_file(tracker)
-        df = create_df(key, tabs)
-        df = rename_cols(df)
-        df = fix_status_inferred(df)
-        df = filter_cols(df,final_cols=['gem-location-id', 'gem-unit/phase-id', 'country', 'unit-name', 'plant-name', 'plant-name-(other)',
-                                        'plant-name-(local)', 'capacity-(mw)', 'status', 'start-year', 'retired-year', 'location-accuracy',
-                                         'owner', 'parent','lat', 'lng', 'combustion-technology',
-                                        'region', 'url', 'subnational-unit-(province,-state)'        
-                                        ])
-                
-        
-        df = input_to_output(df, f'{output_folder}{tracker}-map-file-{iso_today_date}.csv')
-        # test_stats(df)
+        print(f'{len(map_obj_list)} maps to be updated with new {tracker} data!')
+        input('Check if the above statement makes sense ^')
+        list_of_map_objs_mapversion = make_map(map_obj_list) # this returns map obj list map version that can be run thru tests
 
-        print('DONE MAKING Coal SINGLE MAP onto MULTI MAPS')
-        input('continue?')
-    
+        print('Great, now lets run those map objs map version thru tests on source!')
+        input('Confirm above')            
     # subprocess.run(["python", "/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/trackers/multi_tracker_maps_script.py"])                 
     

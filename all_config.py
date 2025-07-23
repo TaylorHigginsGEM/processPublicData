@@ -35,11 +35,12 @@ list_of_all = [
 
 ]
 
-trackers_to_update = ["Iron & Steel"] # official tracker tab name in map tracker log sheet
+pm_preview_mode = False # For Baird's testing work
+trackers_to_update = ["Coal Plants"] # official tracker tab name in map tracker log sheet
 new_release_date = 'July_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-07'
 simplified = False # True False
-priority = [''] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
+priority = ['gcpt'] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
                     # africa
                     # integrated
                     # europe
@@ -204,7 +205,7 @@ steel_gist_table_cols = [
 
 
 # TODO keep in retired year or closed year for longitudinal, and make sure start year is there too
-final_cols = ['plant-status','noneng_owner', 'parent_gem_id', 'status_display','owner_gem_id','facilitytype','unit_id', 'loc-oper', 'loc-owner', 'tech-type','ea_scaling_capacity', 'operator', 'Operator', 'Binational', 'binational', 'loc-accu','units-of-m','mapname','tracker-acro','official_name','url', 'areas','name', 'unit_name', 'capacity',
+final_cols = ['retired-year','plant-status','noneng_owner', 'parent_gem_id', 'status_display','owner_gem_id','facilitytype','unit_id', 'loc-oper', 'loc-owner', 'tech-type','ea_scaling_capacity', 'operator', 'Operator', 'Binational', 'binational', 'loc-accu','units-of-m','mapname','tracker-acro','official_name','url', 'areas','name', 'unit_name', 'capacity',
               'status', 'start_year', 'subnat', 'region', 'owner', 'parent', 'tracker', 'tracker_custom', 'operator-name-(local-lang/script)', 'owner-name-(local-lang/script)',
         'original_units', 'location-accuracy','conversion_factor', 'geometry', 'river', 'area2', 'region2', 'subnat2', 'capacity1', 'capacity2',
         'prod-coal', 'Latitude', 'Longitude', 'pid','id', 'prod_oil', 'prod_gas', 'prod_year_oil', 'prod_year_gas', 'fuel', 'PCI5', 'PCI6', 'pci5','pci6','WKTFormat', 'Fuel', 'maturity', 'fuel-filter', 
@@ -229,9 +230,9 @@ renaming_cols_dict = {'GCCT': {'GEM Plant ID': 'pid', 'GEM Asset name (English)'
                               'Capacity (MW)': 'capacity', 'Status': 'status', 'Fuel': 'fuel', 'Owner(s)': 'owner', 'Parent(s)': 'parent',
                                 'Start year': 'start_year', 'State/Province': 'subnat', 'Region': 'region'},
                       'GCPT': {'GEM location ID':'pid', 'GEM unit/phase ID': 'id','Country/Area': 'areas', 'Wiki URL':'url',
-                                   'Plant name': 'name', 'Unit name':'unit_name',
+                                   'Plant name': 'name', 'Unit name':'unit_name', 'Plant name (other)': 'other_name', 'Plant name (local)': 'noneng_name',
                                    'Owner': 'owner', 'Parent': 'parent', 'Capacity (MW)': 'capacity', 'Status': 'status', 
-                                   'Start year': 'start_year', 'Subnational unit (province, state)': 'subnat', 'Region': 'region'},
+                                   'Start year': 'start_year', 'Subnational unit (province, state)': 'subnat', 'Region': 'region', "Retired year": "retired-year"},
                       'GSPT': {'GEM location ID':'pid', 'GEM phase ID':'id','Country/Area': 'areas', 'Project Name': 'name', 'Phase Name': 'unit_name',
                                'Capacity (MW)': 'capacity', 'Status': 'status', 'Start year': 'start_year', 'Owner': 'owner',
                                'Region': 'region', 'State/Province':'subnat', 'Wiki URL': 'url'},

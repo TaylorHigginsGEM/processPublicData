@@ -123,7 +123,7 @@ var config = {
         'owner': {'label': 'Owner'},
         'start-year': {'label': 'Start date'},
         'location-accuracy': {'label': 'Coordinate Accuracy'},
-         'announced-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced BF capacity (ttpa)'},
+        'announced-nominal-bf-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced BF capacity (ttpa)'},
         'announced-nominal-bof-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced BOF steel capacity (ttpa)'},
         'announced-nominal-dri-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced DRI capacity (ttpa)'},
         'announced-nominal-eaf-steel-capacity-(ttpa)': {'display': 'gist-unit-level','label': 'Announced EAF steel capacity (ttpa)'},
