@@ -74,26 +74,28 @@ def make_data_dwnlds(tracker):
                 # create a map object from that row if tracker is in the source col
                 # TODO THIS pkl file dumping will likely need to be removed before I push
                 # just helps to debugging
-                try: 
-                    with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_obj_for_{map_tab_df.loc[row, "mapname"]}_on_{iso_today_date}.pkl', 'rb') as f:
+                # try: 
+                #     with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_obj_for_{map_tab_df.loc[row, "mapname"]}_on_{iso_today_date}.pkl', 'rb') as f:
                         
-                        print(f'opened from {f}')
-                        input('CHECK')
-                        map_obj = pickle.load(f)
-                except:
+                #         print(f'opened from {f}')
+                #         input('CHECK')
+                #         map_obj = pickle.load(f)
+                # except:
                     
-                    map_obj = make_map_tracker_objs(map_tab_df, row, prep_dict)
-                    
+                map_obj = make_map_tracker_objs(map_tab_df, row, prep_dict)
+                
 
-                    with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_obj_for_{map_obj.name}_on_{iso_today_date}.pkl', 'wb') as f:
-                        print(f'saved to {f}')
-                        pickle.dump(map_obj, f)
+                with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_obj_for_{map_obj.name}_on_{iso_today_date}.pkl', 'wb') as f:
+                    print(f'saved to {f}')
+                    input('check this')
+                    pickle.dump(map_obj, f)
                 # map_obj.data = df_list
                 print(f"Updated map_obj.trackers for {map_obj.name}: {map_obj.source}")
                 # print(f'This is df_list: \n{df_list}') # list of dfs
                 print(f'Length of tracker list for {map_obj.name} {len(map_obj.trackers)}')
                 # for item in map_obj.data:
                 #     print(f'length of item: {len(item)}')
+                input('check above')
                 map_obj_list.append(map_obj)
         
         print(iso_today_date) # /Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl
