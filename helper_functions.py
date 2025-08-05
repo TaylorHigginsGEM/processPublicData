@@ -117,8 +117,8 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
      
     # save to metadata
     mfile_actual = f"/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/metadata_files/{map_obj.name}_{releaseiso}_{iso_today_date}_metadata.yaml"
-    print(f'this is mfile_actual: {mfile_actual}')
-    input('check if it matches')
+    # print(f'this is mfile_actual: {mfile_actual}')
+    # input('check if it matches')
     # Prepare dictionary representations, but do not convert tracker_source_obj.data or map_obj.trackers
     tracker_dict = tracker_source_obj.__dict__.copy()
     map_dict = map_obj.__dict__.copy()
@@ -167,31 +167,32 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
         yaml.dump(existing_data, f, default_flow_style=False)
 
     # mapobj.name
-    for trackerobj in map_obj.trackers: # list of tracker objeccts 
+    for trackerobj in map_obj.trackers: # list of tracker objeccts
+        print(f'This is trackerobj.name: {trackerobj.name}') 
         try:
             originaldf = trackerobj.data
             # save locally then run process
-            trackernamenospace = trackerobj.name.replace(' ', '_')
+            trackernamenospaceoraperand = trackerobj.name.replace(' ', '_').replace('&', 'and')
             iso_today_datenospace = iso_today_date.replace(' ', '_')
 
             originaldf.to_json(
-                f"{map_obj.name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}.json",
+                f"{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json",
                 force_ascii=False,
                 date_format='iso',
                 orient='records',
                 indent=2
                 )
-            originalfile = f'"{map_obj.name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}.json"'
+            originalfile = f'"{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json"'
+            originalfile_with_no_quote = f'{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json' 
             do_command_s3 = (
                 f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-                f'aws s3 cp {originalfile} s3://$BUCKETEER_BUCKET_NAME/{map_obj.name}/{releaseiso}/{originalfile} '
-                f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
+                f'aws s3 cp {originalfile_with_no_quote} s3://$BUCKETEER_BUCKET_NAME/{map_obj.name}/{releaseiso}/{originalfile_with_no_quote} --endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
                 )    
             
             subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # delete the locally saved file
-            if os.path.exists(originalfile):
-                os.remove(originalfile)            
+            if os.path.exists(originalfile_with_no_quote):
+                os.remove(originalfile_with_no_quote)            
                 
         except AttributeError: 
             main_or_h2_df = trackerobj.data[0]
@@ -199,18 +200,20 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
 
             originaldfs = [main_or_h2_df, prod_or_og_df]
             for idx, df in enumerate(originaldfs):
-                trackernamenospace = trackerobj.name.replace(' ', '_')
+                trackernamenospaceoraperand = trackerobj.name.replace(' ', '_').replace('&', '')
+                
                 iso_today_datenospace = iso_today_date.replace(' ', '_')
                 df.to_json(
-                    f"{map_obj.name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}_{idx}.json",
+                    f"{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}_{idx}.json",
                     force_ascii=False,
                     date_format='iso',
                     orient='records',
                     indent=2
                     )
 
-                originalfile = f'"{map_obj.name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}_{idx}.json"'
-
+                originalfile = f'"{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}_{idx}.json"'
+                originalfile_with_no_quote = f'{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}_{idx}.json'
+                
                 do_command_s3 = (
                     f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
                     f'aws s3 cp {originalfile} s3://$BUCKETEER_BUCKET_NAME/{map_obj.name}/{releaseiso}/{originalfile} '
@@ -222,7 +225,7 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
                 # delete the locally saved file
                 if os.path.exists(originalfile):
                     os.remove(originalfile)
-    
+
     print('done with save_raw_s3')
 
 def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
@@ -267,47 +270,28 @@ def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
     with open(mfile_actual, "w") as f:
         yaml.dump(existing_data, f, default_flow_style=False)
     
-    if df2==None:
-        # only df1
-        # do both
-        df = df1
-        trackernamenospace = tracker_name.replace(' ', '_')
-        iso_today_datenospace = iso_today_date.replace(' ', '_')
-        df.to_json(
-            f"{map_obj_name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}.json",
-            force_ascii=False,  # Ensures UTF-8 encoding for non-ASCII characters
-            date_format='iso',  # Optional: formats dates in ISO format
-            orient='records',   # Optional: controls the JSON structure
-            indent=2            # Optional: pretty print with indentation
-        )
-        filt_file = f'"{map_obj_name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}.json"'
-
-        do_command_s3 = (
-            f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-            f'aws s3 cp {filt_file} s3://$BUCKETEER_BUCKET_NAME/{map_obj_name}/{releaseiso}/{filt_file} '
-            f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
-            )    
-            
-
-        subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # delete the locally saved file
-        if os.path.exists(filt_file):
-            os.remove(filt_file)    
-            
-    else:
+    print(f'This is df2 {df2}')
+    
+    if df2 is not None:
         # do both
         dfs = [df1, df2]
         for idx, df in enumerate(dfs):
-            trackernamenospace = tracker_name.replace(' ', '_')
+            trackernamenospaceoraperand = tracker_name.replace(' ', '_').replace('&','')
             iso_today_datenospace = iso_today_date.replace(' ', '_')
+            try:
+                folder_name = mapname_gitpages[official_tracker_name_to_mapname[tracker_name]]
+            except KeyError as e:
+                print(f'error was {e}')
+                # sometimes there is no diffference between the inner dict and outer so would be keyerror because not in outer dict
+                folder_name = official_tracker_name_to_mapname[tracker_name]
             df.to_json(
-                f"{map_obj_name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}_{idx}.json",
+                f"{tracker_folder_path}{folder_name}/compilation_output/{map_obj_name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}_{idx}.json",
                 force_ascii=False,  # Ensures UTF-8 encoding for non-ASCII characters
                 date_format='iso',  # Optional: formats dates in ISO format
                 orient='records',   # Optional: controls the JSON structure
                 indent=2            # Optional: pretty print with indentation
             )
-            filt_file = f'"{map_obj_name}_{releaseiso}_{trackernamenospace}_{iso_today_datenospace}_{idx}.json"'
+            filt_file = f'"{tracker_folder_path}{folder_name}/compilation_output/{map_obj_name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}_{idx}.json"'
 
             do_command_s3 = (
                 f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
@@ -319,6 +303,57 @@ def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
             # delete the locally saved file
             if os.path.exists(filt_file):
                 os.remove(filt_file)    
+
+            
+    else:
+        # only df1
+        print(f'In else statement for {tracker_name}')
+        df = df1
+        print(f'This is df: {df}')
+        trackernamenospaceoraperand = tracker_name.replace(' ', '_').replace('&','')
+        iso_today_datenospace = iso_today_date.replace(' ', '_')
+        try:
+            folder_name = mapname_gitpages[official_tracker_name_to_mapname[tracker_name]]
+        except KeyError as e:
+            print(f'erro was {e}')
+            # sometimes there is no diffference between the inner dict and outer so would be keyerror because not in outer dict
+            folder_name = official_tracker_name_to_mapname[tracker_name]
+        print(f'this is the folder name: {folder_name}')
+        # try:
+        if not isinstance(df, gpd.GeoDataFrame):
+            df.to_json(
+                f"{tracker_folder_path}{folder_name}/compilation_output/{map_obj_name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json",
+                force_ascii=False,  # Ensures UTF-8 encoding for non-ASCII characters
+                date_format='iso',  # Optional: formats dates in ISO format
+                orient='records',   # Optional: controls the JSON structure
+                indent=2            # Optional: pretty print with indentation
+            )
+            filt_file = f'"{tracker_folder_path}{folder_name}/compilation_output/{map_obj_name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json"'
+        else:
+        # except ValueError as e:
+        #     print(f'error is {e}')
+            # Save as GeoJSON using GeoDataFrame's to_file method
+            # gdf = gpd.GeoDataFrame(df, geometry='geometry', crs="EPSG:4326") if not isinstance(df, gpd.GeoDataFrame) else df
+            print('df is actually a gdf')
+            df.to_file(
+            f"{tracker_folder_path}{folder_name}/compilation_output/{map_obj_name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.geojson",
+            driver='GeoJSON',
+            encoding='utf-8'
+            )
+        
+            filt_file = f'"{tracker_folder_path}{folder_name}/compilation_output/{map_obj_name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.geojson"'
+
+        do_command_s3 = (
+            f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
+            f'aws s3 cp {filt_file} s3://$BUCKETEER_BUCKET_NAME/{map_obj_name}/{releaseiso}/{filt_file} '
+            f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
+            )    
+            
+
+        subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # delete the locally saved file
+        if os.path.exists(filt_file):
+            os.remove(filt_file)     
  
     print('done with saving mapfile to s3')
 

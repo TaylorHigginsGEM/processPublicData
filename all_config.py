@@ -6,8 +6,9 @@ from numpy import true_divide
 import sys
 from creds import *
 import logging
+import subprocess
 
-list_of_all = [
+list_of_all_official = [
     "Oil & Gas Plants",
     "Coal Plants",
     "Solar",
@@ -36,12 +37,12 @@ list_of_all = [
 ]
 
 pm_preview_mode = False # For Baird's testing work
-trackers_to_update = ["Coal Plants"] # official tracker tab name in map tracker log sheet
-trackers_to_update = ['Cement and Concrete']# official tracker tab name in map tracker log sheet
-new_release_date = 'July_2025' # for within about page NEEDS TO BE FULL MONTH
-releaseiso = '2025-07'
+trackers_to_update = ["Oil & Gas Plants"] # official tracker tab name in map tracker log sheet
+new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
+releaseiso = '2025-08'
 simplified = False # True False
-priority = ['gcpt'] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
+new_h2_data = False
+priority = [''] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
                     # africa
                     # integrated
                     # europe
@@ -71,6 +72,15 @@ logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctim
 
 tracker_folder_path = '/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/trackers/'
 
+# run this first so all aws commands work later
+s3_setup = (
+    f'aws configure set s3.max_concurrent_requests 100'
+)
+input('Go into 1password and set up the aws access key locally')
+
+subprocess.run(s3_setup, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
 # github pages folder name to map log internal name when they do not match
 mapname_gitpages = {
     "africa": "africa-energy",
@@ -86,18 +96,24 @@ mapname_gitpages = {
     "gbpt": "bioenergy",
     "ggpt": "geothermal",
     "ghpt": "hydro",
+    'gctt': "coal-terminals",
+    'ggit-lng': 'ggit',
+    'egt-gas': 'europe',
+    'egt-term': 'europe',
+    'gogpt-eu': 'europe',
+    
 }
 
 official_tracker_name_to_mapname = {
-    "Oil & Gas Plants": "gogpt",
-    "Coal Plants": "gcpt",
-    "Solar": "gspt",
-    "Wind": "gwpt",
-    "Nuclear": "gnpt",
-    "Hydropower": "ghpt",
-    "Bioenergy": "gbpt",
-    "Geothermal": "ggpt",
-    "Coal Terminals": "gctt",
+    "Oil & Gas Plants": "gogpt", # done
+    "Coal Plants": "gcpt", # done
+    "Solar": "gspt", #done
+    "Wind": "gwpt", # done
+    "Nuclear": "gnpt", # done
+    "Hydropower": "ghpt", #done 
+    "Bioenergy": "gbpt", #done 
+    "Geothermal": "ggpt", #done
+    "Coal Terminals": "gctt", 
     "Oil & Gas Extraction": "goget",
     "Coal Mines": "gcmt",
     "LNG Terminals": "ggit-lng",
@@ -216,7 +232,10 @@ final_cols = ['retired-year','plant-status','noneng_owner', 'parent_gem_id', 'st
 # add two together because gist list is so long and should be refactored soon
 final_cols.extend(steel_gist_table_cols)
 
-renaming_cols_dict = {'GCCT': {'GEM Plant ID': 'pid', 'GEM Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name', 'Coordinate accuracy': 'location-accuracy', 
+renaming_cols_dict = {
+                    'GIOMT': {'GEM wiki page URL': 'url', 'Operating status': 'status', 'Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name'},
+    
+                    'GCCT': {'GEM Plant ID': 'pid', 'GEM Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name', 'Coordinate accuracy': 'location-accuracy', 
                              'Subnational unit': 'subnat', 'Country/Area': 'areas',
                              'Cement Color': 'color', 'Operating status': 'status', 'Start date':'start_year', 'Owner name (English)': 'owner',
                              'Owner name (other language)': 'loc-owner', 'GEM Entity ID':'entity-id', 'Plant type':'plant-type', 

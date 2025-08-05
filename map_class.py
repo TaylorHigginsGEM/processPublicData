@@ -220,10 +220,9 @@ class MapObject:
         if self.name == 'africa':
             
             gdf.to_file(f'{path_for_download_and_map_files_af}{self.name}_map_{iso_today_date}.geojson', driver='GeoJSON', encoding='utf-8')            
-            gdf.to_file(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/testing/final/{self.name}_map_{iso_today_date}.geojson', driver='GeoJSON', encoding='utf-8')
-            
+            gdf.to_file(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/testingcode/files/{self.name}_map_{iso_today_date}.geojson', driver='GeoJSON', encoding='utf-8')
             gdf.to_csv(f'{path_for_download_and_map_files_af}{self.name}_map_{iso_today_date}.csv', encoding='utf-8')
-            gdf.to_csv(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/testing/final/{self.name}_map_{iso_today_date}.csv', encoding='utf-8')
+            gdf.to_csv(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/testingcode/files/{self.name}_map_{iso_today_date}.csv', encoding='utf-8')
             
             process = save_to_s3(self, gdf, 'map', path_for_download_and_map_files_af)
 
@@ -413,7 +412,7 @@ class MapObject:
 
         if len(gdf_map_ready_no_status) > 0:
             input(f'check no status df, will be printed to issues as well: {gdf_map_ready_no_status}')
-            gdf_map_ready_no_status.to_csv(f'trackers/issues/no-status-{self.name}_{iso_today_date}.csv')
+            gdf_map_ready_no_status.to_csv(f'issues/{self.name}-no-status-{iso_today_date}.csv')
         
         # make sure all statuses align with no space rule
         gdf_map_ready['status'] = gdf_map_ready['status'].apply(lambda x: x.strip().replace(' ','-')) # TODO why was this commented out?
@@ -451,7 +450,7 @@ class MapObject:
             print(f'Check out which rows are empty for countries for map will also be printed in issues: {self.name}')
             print(empty_areas)
             # #(input('Remove above')
-            empty_areas.to_csv(f'trackers/issues/empty-areas-{tracker_sel}{iso_today_date}.csv')
+            empty_areas.to_csv(f'issues/{tracker_sel}-empty-areas-{iso_today_date}.csv')
 
         # this formats subnational area for detail maps
         # we would also want to overwrite the subnat and say nothing ""
