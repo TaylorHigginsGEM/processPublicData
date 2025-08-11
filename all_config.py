@@ -37,33 +37,33 @@ list_of_all_official = [
 ]
 
 pm_preview_mode = False # For Baird's testing work
-trackers_to_update = ["Oil & Gas Plants"] # official tracker tab name in map tracker log sheet
+trackers_to_update = ["Integrated"] # official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
 new_h2_data = False
 priority = [''] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
-                    # africa
-                    # integrated
-                    # europe
-                    # asia
-                    # latam
-                    # ggit
-                    # goit
-                    # goget
-                    # gctt
-                    # gcpt
-                    # gcmt
-                    # gogpt
-                    # gspt
-                    # gwpt
-                    # gnpt
-                    # gbpt
-                    # ggpt
-                    # ghpt
-                    # gist
-                    # gmet
-                    # giomt
+                # africa
+                # integrated
+                # europe
+                # asia
+                # latam
+                # ggit
+                # goit
+                # goget
+                # gctt
+                # gcpt
+                # gcmt
+                # gogpt
+                # gspt
+                # gwpt
+                # gnpt
+                # gbpt
+                # ggpt
+                # ghpt
+                # gist
+                # gmet
+                # giomt
 
 logpath = '/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/logfiles/'
 logger = logging.getLogger(__name__)
@@ -76,7 +76,10 @@ tracker_folder_path = '/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_track
 s3_setup = (
     f'aws configure set s3.max_concurrent_requests 100'
 )
-input('Go into 1password and set up the aws access key locally')
+if awskeyres == 'done':
+    pass
+else:
+    awskeyres = input('Go into 1password and set up the aws access key locally, if already done, type done.')
 
 subprocess.run(s3_setup, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
