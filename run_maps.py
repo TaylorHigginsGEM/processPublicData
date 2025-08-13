@@ -3,6 +3,8 @@ from make_data_dwnlds import *
 from make_map_file import *
 from make_metadata import *
 import subprocess
+import geopandas as gpd
+from shapely.geometry import Point
 from tqdm import tqdm # can adapt more, special tweaking for dataframe!
 # TODO make sure the dependency map makes sense, so it calls both single and multi script depending on new data, try with tests
 ###
@@ -18,7 +20,17 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
     # MFILE_ACTUAL = f'{mfile}.yaml'
     metadata = create_or_load_metadata(mfile)
     save_metadata(mfile, metadata)
-    if tracker == 'Oil & Gas Plants':
+    
+    if tracker == 'Iron ore Mines':
+        map_obj_list, problem_map_objs = make_data_dwnlds(tracker)  
+        print(f'{len(map_obj_list)} maps to be updated with new {tracker} data!')
+        # input('Check if the above statement makes sense ^')
+        list_of_map_objs_mapversion = make_map(map_obj_list) # this returns map obj list map version that can be run thru tests
+                
+        print('Great, now lets run those map objs map version thru tests on source!')
+        input('Confirm above')            
+    
+    elif tracker == 'Oil & Gas Plants':
         map_obj_list, problem_map_objs = make_data_dwnlds(tracker)  
         print(f'{len(map_obj_list)} maps to be updated with new {tracker} data!')
         # input('Check if the above statement makes sense ^')
@@ -116,14 +128,15 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         output_folder = '/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/trackers/integrated/compilation_output/'
         
         output_file = f'{output_folder}gipt-data-{iso_today_date}.csv'
+        output_file2 = f'{output_folder}integrated_{releaseiso}.geojson'
+
 
         # creates single map file
         key, tabs = get_key_tabs_prep_file(tracker)
 
-    
         df = create_df(key, tabs)
         ### send to s3 for latest data download
-        s3folder = 'latest'
+        # s3folder = 'latest'
         filetype = 'datadownload'
         parquetpath = f'{output_folder}{tracker}{filetype}{releaseiso}.parquet'
         for col in df.columns:
@@ -135,7 +148,7 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         df.to_parquet(parquetpath, index=False)
         do_command_s3 = (
             f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-            f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{s3folder}/ '
+            f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{tracker}/{releaseiso}/ '
             f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
         )            
         process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -149,10 +162,27 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         df = remove_missing_coord_rows(df)
         
         df.to_csv(output_file, index=False, encoding='utf-8' )
+        
+        # turn into a gdf and save as output_file2
+        # Ensure lat/lng are numeric and drop rows with missing values
+        print(f'length before gdf conversion drop: {len(df)}')
+        df = df.dropna(subset=['lat', 'lng'])
+        df['lat'] = pd.to_numeric(df['lat'], errors='coerce')
+        df['lng'] = pd.to_numeric(df['lng'], errors='coerce')
+        df = df.dropna(subset=['lat', 'lng'])
+        print(f'length after gdf conversion drop: {len(df)}')
+        input('COMPARE THE TWO to see if missing coords row SHOULD BE EQUAL')
 
-        s3folder = 'mapfiles'                
+        # Create geometry column from lng/lat (note: Point(x, y) = Point(lng, lat))
+        geometry = [Point(xy) for xy in zip(df['lng'], df['lat'])]
+        gdf = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+
+        gdf.to_file(output_file2, driver='GeoJSON')
+
+        # s3folder = 'mapfiles'                
         filetype = 'map'
         parquetpath_m = f'{output_folder}{tracker}{filetype}{releaseiso}.parquet'
+        
         for col in df.columns:
         # check if mixed dtype
             if df[col].apply(type).nunique() > 1:
@@ -163,33 +193,28 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         ### do aws command copy to s3 publicgem data
         do_command_s3 = (
             f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-            f'aws s3 cp {parquetpath_m} s3://$BUCKETEER_BUCKET_NAME/{s3folder}/ '
+            f'aws s3 cp {parquetpath_m} s3://$BUCKETEER_BUCKET_NAME/{tracker}/{releaseiso}/ '
             f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
         )            
         process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         input('Check that ingt was saved to s3')
-        capacityfield = 'capacity-(mw)'
-        # run csv2json
-        do_csv2json = (
-            f"csv2geojson --numeric-fields {capacityfield} &&"
-            f"'{output_folder}gipt-data-{releaseiso}.csv' > integrated_{releaseiso}.geojson"
-        )
-        process = subprocess.run(do_csv2json, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         
+        # process = subprocess.run(do_csv2json, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # run tippecanoe
         do_tippecanoe = (
-            f"tippecanoe -e integrated-{releaseiso}.dir --no-tile-compression -r1 -pk -pf --force -l && "
-            f"integrated < integrated_{releaseiso}.geojson"
+            f"tippecanoe -e {output_folder}integrated-{iso_today_date}.dir --no-tile-compression -r1 -pk -pf --force -l integrated < {output_folder}integrated_{releaseiso}.geojson"
         )
         process = subprocess.run(do_tippecanoe, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
+        print('Finished running tippecanoe to create pbf files from the json file. Start on aws bucket command.')
+        print('This may take about 20 min, check Activity Monitor and search for aws to make sure all is ok.')
         # set aws configue and bucket name  # do aws command copy to s3 mapintegrated 
 
         do_aws_bucket = (
             f"aws configure set s3.max_concurrent_requests 100 && "
             f"export BUCKETEER_BUCKET_NAME=mapsintegrated && "
-            f"aws s3 cp --endpoint-url https://nyc3.digitaloceanspaces.com {output_folder}integrated-{releaseiso}.dir s3://$BUCKETEER_BUCKET_NAME/maps/integrated-{releaseiso} --recursive --acl public-read"
+            f"aws s3 cp --endpoint-url https://nyc3.digitaloceanspaces.com {output_folder}integrated-{iso_today_date}.dir s3://$BUCKETEER_BUCKET_NAME/maps/integrated-{releaseiso} --recursive --acl public-read"
         )
         process = subprocess.run(do_aws_bucket, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -207,7 +232,7 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
     
         df = create_df(key, tabs)
         ### send to s3 for latest data download
-        s3folder = 'GIPT-simple'
+        # s3folder = 'GIPT-simple'
         filetype = 'dd'
         parquetpath = f'{output_folder}{tracker}{filetype}{releaseiso}.parquet'
         for col in df.columns:
@@ -219,7 +244,7 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         df.to_parquet(parquetpath, index=False)
         do_command_s3 = (
             f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-            f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{s3folder}/ '
+            f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{tracker}/{releaseiso}/ '
             f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
         )            
         process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -235,7 +260,7 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         
         df.to_csv(output_file, index=False, encoding='utf-8' )
 
-        s3folder = 'GIPT-simple'                
+        # s3folder = 'GIPT-simple'                
         filetype = 'map'
         parquetpath_m = f'{output_folder}{tracker}{filetype}{releaseiso}.parquet'
         for col in df.columns:
@@ -248,27 +273,22 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
         ### do aws command copy to s3 publicgem data
         do_command_s3 = (
             f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-            f'aws s3 cp {parquetpath_m} s3://$BUCKETEER_BUCKET_NAME/{s3folder}/ '
+            f'aws s3 cp {parquetpath_m} s3://$BUCKETEER_BUCKET_NAME/{tracker}/{releaseiso}/ '
             f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
         )            
         process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         input('Check that ingt was saved to s3')
-        capacityfield = 'capacity-(mw)'
-        # run csv2json
-        do_csv2json = (
-            f"csv2geojson --numeric-fields '{capacityfield}' {output_folder}gipt-data-{iso_today_date}.csv "
-            f"> integrated_{iso_today_date}.geojson"
-        )
-        process = subprocess.run(do_csv2json, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
+
         # run tippecanoe
         do_tippecanoe = (
-            f"tippecanoe -e integrated-{iso_today_date}.dir --no-tile-compression -r1 -pk -pf --force -l "
-            f"integrated < integrated_{iso_today_date}.geojson"
+            f"tippecanoe -e {output_folder}integrated-{iso_today_date}.dir --no-tile-compression -r1 -pk -pf --force -l "
+            f"integrated < {output_folder}integrated_{releaseiso}.geojson"
         )
         process = subprocess.run(do_tippecanoe, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
+
+        print('Finished running tippecanoe to create pbf files from the json file. Start on aws bucket command.')
+        print('This may take about 20 min, check Activity Monitor and search for aws to make sure all is ok.')        
         # set aws configue and bucket name  # do aws command copy to s3 mapintegrated 
 
         do_aws_bucket = (
@@ -515,11 +535,14 @@ for tracker in tqdm(trackers_to_update, desc='Running'):
     elif tracker == 'Coal Plants':
 
         map_obj_list, problem_map_objs = make_data_dwnlds(tracker)
-
+        make_summary_tables(map_obj_list) #this has all the filtered dataframes by map 
         # creates single map file
         print(f'{len(map_obj_list)} maps to be updated with new {tracker} data!')
         input('Check if the above statement makes sense ^')
         list_of_map_objs_mapversion = make_map(map_obj_list) # this returns map obj list map version that can be run thru tests
+
+        make_summary_tables(list_of_map_objs_mapversion) # this has all the filtered dataframes by map and renamed!
+
 
         print('Great, now lets run those map objs map version thru tests on source!')
         input('Confirm above')            

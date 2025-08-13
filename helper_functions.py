@@ -171,6 +171,10 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
         print(f'This is trackerobj.name: {trackerobj.name}') 
         try:
             originaldf = trackerobj.data
+            print(len(originaldf))
+            # input('check len of originaldf')
+            print('check len of originaldf')
+
             # save locally then run process
             trackernamenospaceoraperand = trackerobj.name.replace(' ', '_').replace('&', 'and')
             iso_today_datenospace = iso_today_date.replace(' ', '_')
@@ -182,6 +186,8 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
                 orient='records',
                 indent=2
                 )
+            
+            print('saved to json file')
             originalfile = f'"{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json"'
             originalfile_with_no_quote = f'{map_obj.name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json' 
             do_command_s3 = (
@@ -225,7 +231,11 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
                 # delete the locally saved file
                 if os.path.exists(originalfile):
                     os.remove(originalfile)
-
+        except Exception as e:
+            #pass
+            print(f"Error {e}, but keep going.")
+            
+        
     print('done with save_raw_s3')
 
 def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
@@ -2202,7 +2212,8 @@ def create_df(key, tabs=['']):
         # df = pd.read_excel(input_file_xls, sheet_name=None)
         # print(df)
         print(df.info())
-        # input('Check df info plz')
+        print(len(df))
+        input('Check df info plz')
 
 
     # df = df.replace('*', pd.NA).replace('--', pd.NA)
