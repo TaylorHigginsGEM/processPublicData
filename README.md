@@ -2,8 +2,13 @@
 ## Initial Set up
 * create a virtual environment and activate it 
 * pip install -r requirements.txt 
-* in root create creds.py file and put in your path to client secret stored locally and digital ocean access key stored here in [onepassword ]([url](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4))
-
+* create the following Python file by running the following command:
+    1. If on Mac/Linux: `cp creds_TEMPLATE.py creds.py`
+    2. If on Windows: `copy creds_TEMPLATE.py creds.py`
+    3. **This new file should not be committed to git**
+    4. Open `creds.py` with a text editor or IDE, and populate this file with the following
+       *  path to client secret stored locally
+       *  digital ocean access key stored here in [onepassword ]([url](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4)) (if link expired you can find it in the data team vault)
 
 
 ## 
