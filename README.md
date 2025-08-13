@@ -6,9 +6,10 @@
     1. If on Mac/Linux: `cp creds_TEMPLATE.py creds.py`
     2. If on Windows: `copy creds_TEMPLATE.py creds.py`
     3. **This new file should not be committed to git**
-    4. Open `creds.py` with a text editor or IDE, and populate this file with the following
-       *  path to client secret stored locally
-       *  digital ocean access key stored here in [onepassword ]([url](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4)) (if link expired you can find it in the data team vault)
+    4. Open `creds.py` with a text editor or IDE, and populate this file with the following: 
+       *  client_secret = "path to client secret json for google console api" with your local path to client secret 
+       *  ACCESS_KEY = '' digital ocean access key stored here in [onepassword ]([[url](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4)](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4)) (if link expired you can find it in the data team vault)
+       *  SECRET_KEY = '' digital ocean secret key stored here in [onepassword ]([[url](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4)](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4)) (if link expired you can find it in the data team vault)
 
 
 ## 
