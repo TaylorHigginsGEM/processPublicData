@@ -1,7 +1,9 @@
 
 ## Initial Set up
-create a virtual environment and activate it 
-pip install -r requirements.txt 
+* create a virtual environment and activate it 
+* pip install -r requirements.txt 
+* in root create creds.py file and put in your path to client secret stored locally and digital ocean access key stored here in [onepassword ]([url](https://share.1password.com/s#VKz54HWgtkNU5GVblRPnQSq6Bm_uhJV6aRknYUDGNh4))
+
 
 
 ## 
