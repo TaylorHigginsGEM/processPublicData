@@ -38,12 +38,12 @@ list_of_all_official = [
 
 pm_preview_mode = False # For Baird's testing work
 # todo add to documentation to make only europe map for gogpt update say tracker to updated goget and then priority europe
-trackers_to_update = ["Oil & Gas Plants"] #official tracker tab name in map tracker log sheet
+trackers_to_update = ["Iron ore Mines"] #official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
 new_h2_data = False
-priority = ['europe'] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
+priority = [''] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
                 # africa
                 # integrated
                 # europe
@@ -83,7 +83,7 @@ s3_setup = (
 #     pass
 # else:
 #     awskeyres = input('Go into 1password and set up the aws access key locally, if already done, type done.')
-awskeyres = input('Go into 1password and set up the aws access key locally, if already done, type done.')
+# awskeyres = input('Go into 1password and set up the aws access key locally, if already done, type done.')
 
 subprocess.run(s3_setup, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -229,7 +229,7 @@ steel_gist_table_cols = [
 
 
 # TODO keep in retired year or closed year for longitudinal, and make sure start year is there too
-final_cols = ['retired-year','plant-status','noneng_owner', 'parent_gem_id', 'status_display','owner_gem_id','facilitytype','unit_id', 'loc-oper', 'loc-owner', 'tech-type','ea_scaling_capacity', 'operator', 'Operator', 'Binational', 'binational', 'loc-accu','units-of-m','mapname','tracker-acro','official_name','url', 'areas','name', 'unit_name', 'capacity',
+final_cols = ['coordinate-accuracy','total-resource-(inferred', 'parent-gem-id', 'total-reserves-(proven-and-probable','start_date', 'owner-gem-id','owner-noneng','retired-year','plant-status','noneng_owner', 'parent_gem_id', 'status_display','owner_gem_id','facilitytype','unit_id', 'loc-oper', 'loc-owner', 'tech-type','ea_scaling_capacity', 'operator', 'Operator', 'Binational', 'binational', 'loc-accu','units-of-m','mapname','tracker-acro','official_name','url', 'areas','name', 'unit_name', 'capacity',
               'status', 'start_year', 'subnat', 'region', 'owner', 'parent', 'tracker', 'tracker_custom', 'operator-name-(local-lang/script)', 'owner-name-(local-lang/script)',
         'original_units', 'location-accuracy','conversion_factor', 'geometry', 'river', 'area2', 'region2', 'subnat2', 'capacity1', 'capacity2',
         'prod-coal', 'Latitude', 'Longitude', 'pid','id', 'prod_oil', 'prod_gas', 'prod_year_oil', 'prod_year_gas', 'fuel', 'PCI5', 'PCI6', 'pci5','pci6','WKTFormat', 'Fuel', 'maturity', 'fuel-filter', 
@@ -240,7 +240,11 @@ final_cols = ['retired-year','plant-status','noneng_owner', 'parent_gem_id', 'st
 final_cols.extend(steel_gist_table_cols)
 
 renaming_cols_dict = {
-                        'GIOMT': {'GEM wiki page URL': 'url', 'Operating status': 'status', 'Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name'},
+                        'GIOMT': {'Coordinate accuracy': 'coordinate-accuracy','GEM wiki page URL': 'url', 'Operating status': 'status', 'Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name',
+                                  'Design capacity (ttpa)': 'capacity', 'Owner': 'owner', 'Parent': 'parent', 'Start date': 'start_date', 'Country/Area':'areas',
+                                  'Total resource (inferred, indicated and measured, thousand metric tonnes)': 'total-resource-(inferred', 
+                                  'Total reserves (proven and probable, thousand metric tonnes)': 'total-reserves-(proven-and-probable', 'Parent GEM Entity ID': 'parent-gem-id',
+                                  'Owner name in local language/script': 'owner-noneng', 'Owner GEM Entity ID': 'owner-gem-id', 'Subnational unit': 'subnat'},
         
                         'GCCT': {'GEM Plant ID': 'pid', 'GEM Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name', 'Coordinate accuracy': 'location-accuracy', 
                                 'Subnational unit': 'subnat', 'Country/Area': 'areas',
@@ -309,7 +313,7 @@ renaming_cols_dict = {
                                     'UnitName': 'unit_name', 'Status': 'status', 'Country': 'areas', 'Owner': 'owner', 
                                     'Parent': 'parent', 'CapacityInMtpa': 'capacity', 'StartYearEarliest': 'start_year', 'Region': 'region', 
                                     'State/Province': 'subnat'},
-                        # GOGPT-eu two tabs
+                        # GOGPT-eu two tabs when there is new H2 data so usually around EGT release
                         'plants': {'gem-location-id':'pid', 'gem-unit-id': 'id','wiki-url': 'url','country/area': 'areas', 'plant-name': 'name', 'unit-name': 'unit_name',
                                 'capacity-(mw)': 'capacity', 'owner(s)': 'owner', 'parent(s)': 'parent', 'plant-name-in-local-language-/-script': 'other-local', 'other-name(s)': 'other-name',
                                 'start-year': 'start_year', 'state/province': 'subnat'},
@@ -318,7 +322,7 @@ renaming_cols_dict = {
                                 'other-name(s)': 'other-name',
                                 'start-year': 'start_year', 'state/province': 'subnat'},
                         
-                        # the plants_hy cols why not lower case?? 
+                        # the plants_hy cols why not lower case?? not because it wasn't being saved to correct df variable I think it's fixed as of august 13th 9am on flight
                         #  ['In Oil & Gas Plants tab?', 'Wiki URL', 'Country/Area', 'Plant name', 'Plant Name in Local Language / Script', 'Other Name(s)', 'Unit name', 'Fuel', 'Capacity (MW)', 'Status', 'Turbine/Engine Technology', 'Equipment Manufacturer/Model', 'CHP', 'Hydrogen capable?', 'CCS attachment?', 'Conversion/replacement?', 'Conversion from/replacement of (fuel)', 'Conversion from/replacement of (GEM unit ID)', 'Conversion to (fuel)', 'Conversion to (GEM unit ID)', 'Start year', 'Retired year', 'Planned retire', 'Operator(s)', 'Owner(s)', 'Parent(s)', 'Latitude', 'Longitude', 'Location accuracy', 'City', 'Local area (taluk, county)', 'Major area (prefecture, district)', 'State/Province', 'Subregion', 'Region', 'Other IDs (location)', 'Other IDs (unit)', 'Captive industry use', 'Captive industry type', 'Captive non-industry use', 'GEM location ID', 'GEM unit ID', 'H2 usage proposed %', 'Color of H2 proposed?', 'H2 ready turbine (%)?', 'MOU for H2 supply?', 'Contract for H2 supply?', 'Financing for supply of H2?', 'Co-located with electrolyzer/H2 production facility?', 'What % of H2 blending currently?', 'tracker-acro', 'float_col_clean_lat', 'float_col_clean_lng', 'geometry', 'tracker_custom', 'original_units', 'conversion_factor'] 
                         
                         

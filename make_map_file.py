@@ -85,7 +85,9 @@ def make_map(list_of_map_objs):
                 elif tracker_obj.name in ['Iron & Steel']:
                     input('IN IRON & STEEL')
                     tracker_obj.process_steel_iron_parent() 
-                    tracker_obj.gist_changes()  
+                    tracker_obj.gist_changes() 
+                elif tracker_obj.name in ['Iron ore Mines']:
+                    tracker_obj.giomt_changes() 
             
             
             [print(tracker_obj.data[col]) for col in tracker_obj.data.columns if col == 'Clinker Capacity (millions metric tonnes per annum)']
