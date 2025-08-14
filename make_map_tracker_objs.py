@@ -78,7 +78,7 @@ def make_map_tracker_objs(map_tab_df,row, prep_dict):
         else:
             # TODO look over s3 functions with Hannah's code
             # save_raw_s3(map_obj, tracker_source_obj, TrackerObject)
-            # print('Done with save_raw_s3, check s3')
+            print('WIP Done with save_raw_s3, check s3')
             
         # # save to metadata
         # mfile_actual = f"/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/metadata_files/{map_obj.name}_{releaseiso}_{iso_today_date}_metadata.yaml"
