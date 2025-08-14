@@ -62,7 +62,7 @@ var config = {
     /* define the field for calculating and showing capacity along with label.
        this is defined per tracker since it varies widely */
     capacityField: 'scaling_cap',
-    capacityDisplayField: 'design-capacity-(ttpa)',
+    capacityDisplayField: 'capacity',
     capacityLabel: '',
 
     /* Labels for describing the assets */
@@ -70,24 +70,24 @@ var config = {
     assetLabel: 'assets',
 
     /* the column that contains the asset name. this varies between trackers */
-    nameField: 'name-(english)',
+    nameField: 'name',
 
     countryField: 'country/area',
     /* configure the table view, selecting which columns to show, how to label them, 
         and designated which column has the link */
     tableHeaders: {
-        values: ['name-(english)', 'name-(other-language)','design-capacity-(ttpa)', 'total-reserves-(proven-and-probable', 'total-resource-(inferred','status', 'owner', 'parent',  'country/area'],
+        values: ['name', 'noneng_name','capacity', 'total-reserves-(proven-and-probable', 'total-resource-(inferred','status', 'owner', 'parent',  'areas'],
         labels: ['Asset name', 'Asset Name (other language)','Design Capacity (ttpa)','Reserve (thousand tonnes)', 'Resource (thousand tonnes)','Status','Owner', 'Parent', 'Country/Area(s)'],
-        clickColumns: ['name-(english)'],
-        rightAlign: ['design-capacity-(ttpa)', 'total-reserves-(proven-and-probable', 'total-resource-(inferred'],
-        toLocaleString: ['design-capacity-(ttpa)', 'total-reserves-(proven-and-probable', 'total-resource-(inferred'],
+        clickColumns: ['name'],
+        rightAlign: ['capacity', 'total-reserves-(proven-and-probable', 'total-resource-(inferred'],
+        toLocaleString: ['capacity', 'total-reserves-(proven-and-probable', 'total-resource-(inferred'],
         
     },
 
     /* configure the search box; 
         each label has a value with the list of fields to search. Multiple fields might be searched */
-    searchFields: { 'Asset name': ['name-(english)', 'name-(other-language)'], 
-        'Companies': ['owner', 'parent'],
+    searchFields: { 'Asset name': ['name', 'noneng_name'], 
+        'Companies': ['owner', 'parent', 'parent-gem-id', 'owner-noneng', 'owner-gem-id'],
 
     },
     /* define fields and how they are displayed. 
@@ -98,11 +98,11 @@ var config = {
       `'label': '...'` prepends a label. If a range, two values for singular and plural.
     */
     detailView: {
-        'name-(english)': {'display': 'heading'},
+        'name': {'display': 'heading'},
         'status': {'label': 'Status'},
-        'design-capacity-(ttpa)': {'label': 'Design Capacity (ttpa)'},
-        'subnational-unit': {'display': 'location'},
-        'country/area': {'display': 'location'},
+        'capacity': {'label': 'Design Capacity (ttpa)'},
+        'subnat': {'display': 'location'},
+        'areas': {'display': 'location'},
         'total-reserves-(proven-and-probable': {'label': 'Reserves (thousand tonnes)'},
         'total-resource-(inferred': {'label': 'Resources (thousand tonnes)'},
         'owner': {'label': 'Owner'},
