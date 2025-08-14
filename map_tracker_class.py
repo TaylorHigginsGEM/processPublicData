@@ -13,7 +13,7 @@ from shapely import wkt
 import pickle
 from datetime import datetime
 import urllib.parse # quote() and quote_plus() for query params
-
+import os
 
 
 class TrackerObject:
@@ -82,10 +82,13 @@ class TrackerObject:
     
 
     def set_df(self):
+        # TODO move all these to all_config to make relative path set up cleaner
+        local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
 
+        pkl_path = os.path.join(local_pkl_dir, f'trackerdf_for_{self.acro}_on_{iso_today_date}.pkl')
         print(f'See if data already exists locally for {self.name}...')
         try: 
-            with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/trackerdf_for_{self.acro}_on_{iso_today_date}.pkl', 'rb') as f:
+            with open({pkl_path}, 'rb') as f:
                 
                 print(f'opened from {f}')
                 self.data = pickle.load(f)
@@ -252,9 +255,11 @@ class TrackerObject:
 
                 # df = pd.read_parquet(f'{parquet_file_source_path}{parquet_s3}') 
                 self.data = df
+            local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
 
+            pkl_path = os.path.join(local_pkl_dir, f'trackerdf_for_{self.acro}_on_{iso_today_date}.pkl')
 
-            with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/trackerdf_for_{self.acro}_on_{iso_today_date}.pkl', 'wb') as f:
+            with open(pkl_path, 'wb') as f:
                 print(f'saved to {f}')
                 pickle.dump(self.data, f)
                 try:
