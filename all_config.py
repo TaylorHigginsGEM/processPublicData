@@ -37,7 +37,7 @@ list_of_all_official = [
 ]
 
 pm_preview_mode = False # For Baird's testing work
-trackers_to_update = ["Oil & Gas Plants"] # official tracker tab name in map tracker log sheet
+trackers_to_update = ["Iron ore Mines"] # official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
@@ -120,14 +120,14 @@ tracker_folder_path = 'trackers/'
 # run this first so all aws commands work later
 s3_setup = (
     f'aws configure set s3.max_concurrent_requests 100'
-)
+) 
 # if awskeyres == 'done':
 #     pass
 # else:
 #     awskeyres = input('Go into 1password and set up the aws access key locally, if already done, type done.')
 
-subprocess.run(s3_setup, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+# subprocess.run(s3_setup, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# TODO explore why aws configure set s3.max_concurrent_requests 100 doesn't recognize aws David add to requirements
 
 # github pages folder name to map log internal name when they do not match
 mapname_gitpages = {
