@@ -7,6 +7,7 @@ from make_map_tracker_objs import make_map_tracker_objs
 from collections import OrderedDict
 from tqdm import tqdm
 import subprocess
+import os
 
 # from .map_class import MapObject
 # from .pull_down_s3 import *
@@ -85,7 +86,10 @@ def make_data_dwnlds(tracker):
                 map_obj = make_map_tracker_objs(map_tab_df, row, prep_dict)
                 
 
-                with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_obj_for_{map_obj.name}_on_{iso_today_date}.pkl', 'wb') as f:
+                local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
+                os.makedirs(local_pkl_dir, exist_ok=True)
+                pkl_path = os.path.join(local_pkl_dir, f'map_obj_for_{map_obj.name}_on_{iso_today_date}.pkl')
+                with open(pkl_path, 'wb') as f:
                     print(f'saved to {f}')
                     # TODO now use log statements here instead of print! 
                     pickle.dump(map_obj, f)
@@ -98,10 +102,10 @@ def make_data_dwnlds(tracker):
                 input('check above')
                 map_obj_list.append(map_obj)
         
-        print(iso_today_date) # /Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl
-        with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_objs_list{iso_today_date}.pkl', 'wb') as f:
-            print(f'saved to {f}')
-            pickle.dump(map_obj_list, f)
+        # print(iso_today_date) # /Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl
+        # with open(os.path.join(local_pkl_dir, f'map_objs_list{iso_today_date}.pkl'), 'wb') as f:
+        #     print(f'saved to {f}')
+        #     pickle.dump(map_obj_list, f)
     
     else:
         print(f'{len(map_obj_list)} maps to be updated with new {tracker} data!')

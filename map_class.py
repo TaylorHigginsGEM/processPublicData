@@ -225,7 +225,7 @@ class MapObject:
         
         
         if self.name == 'africa':
-            
+            # TODO later make this not absolute
             gdf.to_file(f'{path_for_download_and_map_files_af}{self.name}_map_{iso_today_date}.geojson', driver='GeoJSON', encoding='utf-8')            
             gdf.to_file(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/testingcode/files/{self.name}_map_{iso_today_date}.geojson', driver='GeoJSON', encoding='utf-8')
             gdf.to_csv(f'{path_for_download_and_map_files_af}{self.name}_map_{iso_today_date}.csv', encoding='utf-8')

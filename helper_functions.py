@@ -109,10 +109,13 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
 
 
 def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
-    
+    metadata_dir = os.path.join(os.path.dirname(__file__), 'metadata_files')
+    os.makedirs(metadata_dir, exist_ok=True)
+    # write to config file total length of dfs
+    mfile_actual = os.path.join(metadata_dir, f'{map_obj.name}_{releaseiso}_{iso_today_date}_metadata.yaml')
+
      
     # save to metadata
-    mfile_actual = f"/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/metadata_files/{map_obj.name}_{releaseiso}_{iso_today_date}_metadata.yaml"
     # print(f'this is mfile_actual: {mfile_actual}')
     # input('check if it matches')
     # Prepare dictionary representations, but do not convert tracker_source_obj.data or map_obj.trackers
@@ -234,8 +237,12 @@ def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
     """
     Save map file to S3. df2 is optional.
     """
+    
+    # TODO move this os.path work to util or config file like Hannah does it!
+    metadata_dir = os.path.join(os.path.dirname(__file__), 'metadata_files')
+    os.makedirs(metadata_dir, exist_ok=True)
     # write to config file total length of dfs
-    mfile_actual = f"/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/metadata_files/{map_obj_name}_{releaseiso}_{iso_today_date}_metadata.yaml"
+    mfile_actual = os.path.join(metadata_dir, f'{map_obj_name}_{releaseiso}_{iso_today_date}_metadata.yaml')
 
     # Prepare metadata dictionary for logging
     meta_entry = {
