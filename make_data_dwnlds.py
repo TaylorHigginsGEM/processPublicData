@@ -99,7 +99,7 @@ def make_data_dwnlds(tracker):
                 print(f'Length of tracker list for {map_obj.name} {len(map_obj.trackers)}')
                 # for item in map_obj.data:
                 #     print(f'length of item: {len(item)}')
-                input('check above')
+                input('check above for number of trackers included in the map type.')
                 map_obj_list.append(map_obj)
         
         # print(iso_today_date) # /Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl

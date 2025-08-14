@@ -3448,7 +3448,7 @@ def make_plant_level_status(unit_status_list, plant_id):
         print(f'Status set list: \n{set_list}')
         print(f'This is the plant id to check:\n{plant_id}')
         plant_status = ''
-        input('Check above')
+        # input('Check above')
 
     return plant_status
 
