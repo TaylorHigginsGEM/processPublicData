@@ -76,8 +76,9 @@ def make_map_tracker_objs(map_tab_df,row, prep_dict):
             print(tracker_source_obj.data)
             # input(f'check tracker name and data df: {tracker_source_obj.name}')
         else:
-            save_raw_s3(map_obj, tracker_source_obj, TrackerObject)
-            print('Done with save_raw_s3, check s3')
+            # TODO look over s3 functions with Hannah's code
+            # save_raw_s3(map_obj, tracker_source_obj, TrackerObject)
+            # print('Done with save_raw_s3, check s3')
             
         # # save to metadata
         # mfile_actual = f"/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/metadata_files/{map_obj.name}_{releaseiso}_{iso_today_date}_metadata.yaml"
@@ -144,7 +145,8 @@ def make_map_tracker_objs(map_tab_df,row, prep_dict):
             
             print(f'This is tracker.name {tracker.name}')
             # save filtered df to s3 and log to config yaml how long it is after filter
-            save_mapfile_s3(map_obj.name, tracker.name, True, tracker.data)
+            # TODO commenting this out for now since data mgmt process still in progress 
+            # save_mapfile_s3(map_obj.name, tracker.name, True, tracker.data)
 
             # Log the results after filtering
             with open("tracker_data_log.txt", "a") as log_file:
@@ -167,7 +169,8 @@ def make_map_tracker_objs(map_tab_df,row, prep_dict):
 
             # save filtered df to s3 and log to config yaml how long it is after filter
             # input('Check after geo filter')
-            save_mapfile_s3(map_obj.name, tracker.name, True, main_or_h2, prod_or_og)
+            # TODO same as above 
+            # save_mapfile_s3(map_obj.name, tracker.name, True, main_or_h2, prod_or_og)
 
         except TypeError as e:
             print(f'Fix error for {map_obj.name}: \n{e}')

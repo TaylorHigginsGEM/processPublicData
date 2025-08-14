@@ -307,6 +307,9 @@ def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
                 f'aws s3 cp {filt_file} s3://$BUCKETEER_BUCKET_NAME/{map_obj_name}/{releaseiso}/{filt_file} '
                 f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
                 )    
+            
+            # TO LOOK OVER THIS SIMPLER boto3 way to push to s3, see if you can set public
+            # https://github.com/GlobalEnergyMonitor/WikiURLProcessing/blob/main/upload_csv_to_s3bucket.py
 
             subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # delete the locally saved file
