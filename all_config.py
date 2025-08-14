@@ -38,12 +38,13 @@ list_of_all_official = [
 
 pm_preview_mode = False # For Baird's testing work
 # todo add to documentation to make only europe map for gogpt update say tracker to updated goget and then priority europe
-trackers_to_update = ["Iron ore Mines"] #official tracker tab name in map tracker log sheet
+trackers_to_update = ["Oil & Gas Plants"] #official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
 new_h2_data = False
-priority = [''] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
+priority = ['europe'] 
+                # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
                 # africa
                 # integrated
                 # europe

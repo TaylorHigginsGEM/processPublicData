@@ -87,7 +87,7 @@ def make_data_dwnlds(tracker):
 
                 with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_obj_for_{map_obj.name}_on_{iso_today_date}.pkl', 'wb') as f:
                     print(f'saved to {f}')
-                    input('check this')
+                    # TODO now use log statements here instead of print! 
                     pickle.dump(map_obj, f)
                 # map_obj.data = df_list
                 print(f"Updated map_obj.trackers for {map_obj.name}: {map_obj.source}")
@@ -156,9 +156,9 @@ def make_data_dwnlds(tracker):
                 writer = bold_first_row(writer, sheet_name=f'About {about_tab_name}') # TODO this did not work 
 
                 for tracker_obj in map_obj.trackers:
-                    print(f"Writing source to filename: {tracker_obj.name}")
-                    print(f'Length of tracker df is: {len(tracker_obj.data)}')
-                    input('Read that!')
+
+                    logger.info(f"Writing source to filename: {tracker_obj.name}")
+                    logger.info(f'Length of tracker df is: {len(tracker_obj.data)}')
                     # df = tracker_obj.data
                     about = tracker_obj.about
                     tracker_name = tracker_obj.name
@@ -167,14 +167,16 @@ def make_data_dwnlds(tracker):
                     writer = bold_first_row(writer, sheet_name=f'About {tracker_name}')
                     if isinstance(tracker_obj.data, tuple):
                         print(tracker_obj.name)
-                        input("In tuple part of make data dwnlds, check the name")
+                        input("In tuple part of make data dwnlds function, check the name can be gogpt eu (when there's new h2 data) or goget")
+                        logger.info(f"In tuple part of make data dwnlds function for {tracker_obj.name}, check the name can be gogpt eu (when there's new h2 data) or goget")
                         tracker_obj.set_data_official() # so have data for map and for datadownload
 
                         if tracker_name == 'Oil & Gas Extraction':
-                            print(tracker_obj.data)
-                            input('Check if there is anything there before data official')
-                            
-
+                            # print(tracker_obj.data) # log out the len of data                            
+                            if len(tracker_obj.data) > 0:
+                                pass
+                            else:
+                                input(f'data is empty for {tracker_name}')
                             main, prod = tracker_obj.data_official 
                             # check if set data official works
                             for df in [main, prod]: 

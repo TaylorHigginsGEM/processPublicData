@@ -54,11 +54,7 @@ SQL = '''
 #     return 
 
 def save_to_s3(obj, df, filetype='', path_dwn=''):
-    print('in save_to_s3')
-    geojsonpath = f"{path_dwn}{obj.name}_map_{iso_today_date}.geojson" # for africa or regular
-    print(f'This is geojsonpath: {geojsonpath}')
-    # print(type(df))
-    
+    geojsonpath = f"{path_dwn}{obj.name}_map_{iso_today_date}.geojson" # for africa or regular    
     # Ensure geometry is properly handled before saving
     if 'geometry' in df.columns:
         if not isinstance(df, gpd.GeoDataFrame):
@@ -317,19 +313,15 @@ def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
             
     else:
         # only df1
-        print(f'In else statement for {tracker_name}')
         df = df1
-        print(f'This is df: {df}')
         trackernamenospaceoraperand = tracker_name.replace(' ', '_').replace('&','')
         iso_today_datenospace = iso_today_date.replace(' ', '_')
         try:
             folder_name = mapname_gitpages[official_tracker_name_to_mapname[tracker_name]]
         except KeyError as e:
-            print(f'erro was {e}')
+            print(f'error was {e}')
             # sometimes there is no diffference between the inner dict and outer so would be keyerror because not in outer dict
             folder_name = official_tracker_name_to_mapname[tracker_name]
-        print(f'this is the folder name: {folder_name}')
-        # try:
         if not isinstance(df, gpd.GeoDataFrame):
             df.to_json(
                 f"{tracker_folder_path}{folder_name}/compilation_output/{map_obj_name}_{releaseiso}_{trackernamenospaceoraperand}_{iso_today_datenospace}.json",
@@ -1130,12 +1122,10 @@ def assign_conversion_factors(df, conversion_df):
 
 
 def rename_gdfs(df):
-    # df.columns = df.columns.str.lower() # TEST but this shouldn't be here
-    # df.columns = df.columns.str.replace(' ', '-')
-    
-    # TODO April 21st check that tracker is a column not just a attribute?!
-    tracker_sel = df['tracker-acro'].iloc[0] # plants, term, pipes, extraction
 
+    tracker_sel = df['tracker-acro'].iloc[0] # plants, term, pipes, extraction
+    print(tracker_sel)
+    input(f"check above ...if not 'plants_hy', 'plants', 'GOGPT-eu' we found problem")
     # TO DO remove this later 
     if tracker_sel in ['plants_hy', 'plants', 'GOGPT-eu']:
         df.columns = df.columns.str.lower()

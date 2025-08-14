@@ -180,13 +180,7 @@ class TrackerObject:
     
                 # gdf = gpd.GeoDataFrame(df, geometry='geometry', crs="EPSG:4326")
                 gdf.set_crs("epsg:4326", inplace=True)
-                print(gdf['geometry'])
-                input('check geometry of new way of pulling from s3')
-                print(len(gdf))
-                print(gdf.columns)
-                test = gdf[gdf['PipelineName']=='Azerbaijan-Georgia-Romania Interconnector Gas']
-                print(test)
-                input('its there on s3 download')
+
                 self.data = gdf
                 
             elif self.name == 'LNG Terminals EU':
@@ -722,7 +716,7 @@ class TrackerObject:
         #     self.data.drop_duplicates(subset='id', inplace=True, keep='last') # add logic so it defaults to keeping the gogpt-hy ones over the gogpt ones, so if yes in gogpt data remove
         
         if new_h2_data == True:
-            
+            input("CHECK H2 IS TRUE")
             plants_df, plants_hy_df = self.data
             
             plants_df['tracker-acro'] = 'plants'
@@ -742,23 +736,13 @@ class TrackerObject:
             # concat the two first
             gogpt_eu_df = pd.concat(list_dfs, sort=False, ignore_index=True)
             gogpt_eu_df.reset_index(drop=True, inplace=True)
-            print(len(gogpt_eu_df))
             gogpt_eu_df.drop_duplicates(subset='id', inplace=True, keep='last') # add logic so it defaults to keeping the hy one, last because second df in list
-            print(len(gogpt_eu_df))
-            [print(col) for col in df.columns]
-            input('After concat in deduplciate_gogpt_eu')
-            print(f'TYPE of GOGPT EU SHOULD BE DF NOW: {type(gogpt_eu_df)}')
-            input('IS IT?!REALLY LOOK')
-            [print(col) for col in gogpt_eu_df.columns]
-            print('Look at cols in it now to see how to rename in rename_and_concat_gdfs for map GOGPT-eu')
-            input('CHECK cols for tracker_obj.name == GOGPT EU')
+
             self.data = gogpt_eu_df
         
         else:
-            print('h2 is not new so... different process needed! ')
-            plants_df, plants_hy_df = self.data
-            print(f'this is plants df should be "": {plants_df}')
-            print(f'this is plants_hy_df should be 110: {plants_hy_df}')
+            input("CHECK H2 NOT TRUE")
+            plants_hy_df = self.data
             
             plants_hy_df['tracker-acro'] = 'plants_hy'
             # need this to be GOGPT for conversion factors 
@@ -767,14 +751,7 @@ class TrackerObject:
             if 'geometry' not in plants_hy_df.columns:
                 plants_hy_df = convert_coords_to_point(plants_hy_df)
                 
-            gogpt_eu_df = rename_gdfs(plants_hy_df) # TODO check that the right acro in all config is here for the tabs
-            print(len(gogpt_eu_df))
-            [print(col) for col in gogpt_eu_df.columns]
-            print(f'TYPE of GOGPT EU SHOULD BE DF NOW: {type(gogpt_eu_df)}')
-            input('IS IT?!REALLY LOOK')
-            [print(col) for col in gogpt_eu_df.columns]
-            print('Look at cols in it now to see how to rename in rename_and_concat_gdfs for map GOGPT-eu')
-            input('CHECK cols for tracker_obj.name == GOGPT EU')
+            gogpt_eu_df = rename_gdfs(plants_hy_df) 
 
             self.data = gogpt_eu_df
             
@@ -1559,8 +1536,7 @@ class TrackerObject:
                 input(self.name)
 
             else:
-                print(F'likely already a gdf: {self.name}')
-                input(self.name)
+                logger.info(f'{self.name} already a gdf MOST LIKELY but if not pipelines or ggit terminals then be worried.')
                 gdf = self.data
 
         self.data = gdf
