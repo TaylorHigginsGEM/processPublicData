@@ -633,27 +633,27 @@ def geojson_to_gdf(geojson_file):
     
 #     return f"{path_dwn}{mapname}{releaseiso}.parquet"
 
-def get_standard_country_names():
+# def get_standard_country_names():
     
-    if local_copy:
+#     if local_copy:
 
-        with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'rb') as f:
-            gem_standard_country_names = pickle.load(f)
+#         with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'rb') as f:
+#             gem_standard_country_names = pickle.load(f)
     
-    else:
-        df = gspread_access_file_read_only(
-            '1mtlwSJfWy1gbIwXVgpP3d6CcUEWo2OM0IvPD6yztGXI', 
-            ['Countries'],
-        )
-        gem_standard_country_names = df['GEM Standard Country Name'].tolist()
+#     else:
+#         df = gspread_access_file_read_only(
+#             '1mtlwSJfWy1gbIwXVgpP3d6CcUEWo2OM0IvPD6yztGXI', 
+#             ['Countries'],
+#         )
+#         gem_standard_country_names = df['GEM Standard Country Name'].tolist()
         
-        with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'wb') as f:
-            pickle.dump(gem_standard_country_names, f)
+#         with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'wb') as f:
+#             pickle.dump(gem_standard_country_names, f)
         
     
-    return gem_standard_country_names
+#     return gem_standard_country_names
 
-# gem_standard_country_names = get_standard_country_names()
+# # gem_standard_country_names = get_standard_country_names()
 
 
 

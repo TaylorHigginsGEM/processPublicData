@@ -7,6 +7,8 @@ import sys
 from creds import *
 import logging
 import subprocess
+from pathlib import Path
+
 
 list_of_all_official = [
     "Oil & Gas Plants",
@@ -66,6 +68,22 @@ priority = [''] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapna
                 # giomt
 
 
+# run bash/subfolders.sh to create all compilation_output subfolder in each tracker folder
+
+# At the beginning of all_config.py
+def ensure_compilation_folders():
+    """Ensure compilation_output folders exist in all tracker directories"""
+    trackers_dir = Path(__file__).parent / 'trackers'
+    
+    for tracker_dir in trackers_dir.iterdir():
+        if tracker_dir.is_dir() and not tracker_dir.name.startswith('.'):
+            compilation_dir = tracker_dir / 'compilation_output'
+            compilation_dir.mkdir(exist_ok=True)
+
+# Run at import time
+ensure_compilation_folders()
+
+
 # def main():
 # make necessary directories if they don't exist
 folders_needed = ["logfiles/", 'local_pkl/', "metadata_files/"]
@@ -73,6 +91,9 @@ for folder in folders_needed:
     
     if not os.path.exists(folder): # TODO in future move to be ../logfiles
         os.mkdir(f"{folder}")
+
+
+
         
 
 
