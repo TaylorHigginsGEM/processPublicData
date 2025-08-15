@@ -1041,15 +1041,7 @@ def split_goget_ggit_eu(df):
 
 
 def create_conversion_df(conversion_key, conversion_tab):
-    # if local_copy:
 
-    #     # Load the list of GeoDataFrames from the pickle file
-    #     with open('local_pkl/conversion_df.pkl', 'rb') as f:
-    #         df = pickle.load(f)
-
-    #     print("DataFrames have been loaded from conversion_df.pkl")        
-                
-    # else:
     df = gspread_access_file_read_only(conversion_key, conversion_tab)
     # # # printf'this is conversion df: {df}')
     
@@ -1057,7 +1049,7 @@ def create_conversion_df(conversion_key, conversion_tab):
     df = df.rename(columns={'conversion factor (capacity/production to common energy equivalents, TJ/y)': 'conversion_factor', 'original units': 'original_units'})
     df['tracker'] = df['tracker'].apply(lambda x: x.strip())
     
-    with open('local_pkl_dir/conversion_df.pkl', 'wb') as f:
+    with open(f'{local_pkl_dir}/conversion_df.pkl', 'wb') as f:
         pickle.dump(df, f)
     print("DataFrames have been saved to conversion_df.pkl")
 
