@@ -2549,7 +2549,7 @@ def clean_about_df(df):
 def rebuild_countriesjs(mapname, newcountriesjs):
 
         prev_countriesjs = f'{tracker_folder_path}{mapname}/countries.json'
-        default = "gem_tracker_maps/src/countries.json"
+        default = "src/countries.json"
      
         print(prev_countriesjs)
         print('The above is from the existing countries.json file if it exists in the map folder')
