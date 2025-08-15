@@ -73,9 +73,9 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
             # if so, convert it to string
             df[col] = df[col].fillna('').astype(str)
         
-    
-    parquetpath = f"{path_dwn}{obj.name}{filetype}{releaseiso}.parquet"
-    df.to_parquet(parquetpath, index=False)
+    # TODO address parquet error Hannah
+    # parquetpath = f"{path_dwn}{obj.name}{filetype}{releaseiso}.parquet"
+    # df.to_parquet(parquetpath, index=False)
     # print('Parquet file is saved!')
     
     # # Determine S3 folder based on filetype
@@ -87,7 +87,7 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
     #     s3folder = 'uncategorized'
     
     # Prepare and execute S3 upload command
-    if geojsonpath != '' and filetype == 'map':
+    # if geojsonpath != '' and filetype == 'map':
         
         do_command_s3 = (
             f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
@@ -103,7 +103,6 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
             f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
         )    
         
-            
     process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return process
 
@@ -640,7 +639,7 @@ def geojson_to_gdf(geojson_file):
     
 #     if local_copy:
 
-#         with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'rb') as f:
+#         with open(f'local_pkl_dir/gem_standard_country_names_{iso_today_date}.pkl', 'rb') as f:
 #             gem_standard_country_names = pickle.load(f)
     
 #     else:
@@ -650,7 +649,7 @@ def geojson_to_gdf(geojson_file):
 #         )
 #         gem_standard_country_names = df['GEM Standard Country Name'].tolist()
         
-#         with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'wb') as f:
+#         with open(f'local_pkl_dir/gem_standard_country_names_{iso_today_date}.pkl', 'wb') as f:
 #             pickle.dump(gem_standard_country_names, f)
         
     
@@ -1042,15 +1041,7 @@ def split_goget_ggit_eu(df):
 
 
 def create_conversion_df(conversion_key, conversion_tab):
-    # if local_copy:
 
-    #     # Load the list of GeoDataFrames from the pickle file
-    #     with open('local_pkl/conversion_df.pkl', 'rb') as f:
-    #         df = pickle.load(f)
-
-    #     print("DataFrames have been loaded from conversion_df.pkl")        
-                
-    # else:
     df = gspread_access_file_read_only(conversion_key, conversion_tab)
     # # # printf'this is conversion df: {df}')
     
@@ -1058,7 +1049,7 @@ def create_conversion_df(conversion_key, conversion_tab):
     df = df.rename(columns={'conversion factor (capacity/production to common energy equivalents, TJ/y)': 'conversion_factor', 'original units': 'original_units'})
     df['tracker'] = df['tracker'].apply(lambda x: x.strip())
     
-    with open('/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/conversion_df.pkl', 'wb') as f:
+    with open(f'{local_pkl_dir}/conversion_df.pkl', 'wb') as f:
         pickle.dump(df, f)
     print("DataFrames have been saved to conversion_df.pkl")
 
@@ -2558,7 +2549,7 @@ def clean_about_df(df):
 def rebuild_countriesjs(mapname, newcountriesjs):
 
         prev_countriesjs = f'{tracker_folder_path}{mapname}/countries.json'
-        default = f"{'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/src/countries.json'}"
+        default = "src/countries.json"
      
         print(prev_countriesjs)
         print('The above is from the existing countries.json file if it exists in the map folder')

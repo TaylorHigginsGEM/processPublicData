@@ -9,6 +9,10 @@ import logging
 import subprocess
 from pathlib import Path
 
+today_date = datetime.today()
+
+iso_today_date = today_date.isoformat().split('T')[0]
+iso_today_date_folder = f'{iso_today_date}/'
 
 list_of_all_official = [
     "Oil & Gas Plants",
@@ -39,7 +43,7 @@ list_of_all_official = [
 ]
 
 pm_preview_mode = False # For Baird's testing work
-trackers_to_update = ["Oil & Gas Plants"] # official tracker tab name in map tracker log sheet
+trackers_to_update = ["Iron ore Mines"] # official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
@@ -76,7 +80,7 @@ os.makedirs(local_pkl_dir, exist_ok=True)
 
 logpath = 'logfiles/'
 logger = logging.getLogger(__name__)
-log_file_path = f'{logpath}log_file_{today_date}.log' 
+log_file_path = f'{logpath}log_file_{iso_today_date}.log' 
 logger.setLevel(logging.DEBUG)  # Set the lowest logging level for the logger
  
 logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -199,10 +203,7 @@ rep_point_key = '1Bu2RhxgvRW7yEJu6zbng_nudXBYRASNvRtgIOvrDN0c', # GEM Standard C
 rep_point_tab = ['gem standard representative points']
 # Format the date in ISO format
 # Get today's date
-today_date = datetime.today()
 
-iso_today_date = today_date.isoformat().split('T')[0]
-iso_today_date_folder = f'{iso_today_date}/'
 client_secret_full_path = os.path.expanduser("~/") + client_secret
 gem_path = os.path.join(os.path.dirname(__file__), 'trackers/')
 # gem_path_tst = '~/testing/'
@@ -268,7 +269,7 @@ steel_gist_table_cols = [
 
 
 # TODO keep in retired year or closed year for longitudinal, and make sure start year is there too
-final_cols = ['retired-year','plant-status','noneng_owner', 'parent_gem_id', 'status_display','owner_gem_id','facilitytype','unit_id', 'loc-oper', 'loc-owner', 'tech-type','ea_scaling_capacity', 'operator', 'Operator', 'Binational', 'binational', 'loc-accu','units-of-m','mapname','tracker-acro','official_name','url', 'areas','name', 'unit_name', 'capacity',
+final_cols = ['lat', 'lng','coordinate-accuracy','total-resource-(inferred', 'parent-gem-id', 'total-reserves-(proven-and-probable','start_date', 'owner-gem-id','owner-noneng','retired-year','plant-status','noneng_owner', 'parent_gem_id', 'status_display','owner_gem_id','facilitytype','unit_id', 'loc-oper', 'loc-owner', 'tech-type','ea_scaling_capacity', 'operator', 'Operator', 'Binational', 'binational', 'loc-accu','units-of-m','mapname','tracker-acro','official_name','url', 'areas','name', 'unit_name', 'capacity',
               'status', 'start_year', 'subnat', 'region', 'owner', 'parent', 'tracker', 'tracker_custom', 'operator-name-(local-lang/script)', 'owner-name-(local-lang/script)',
         'original_units', 'location-accuracy','conversion_factor', 'geometry', 'river', 'area2', 'region2', 'subnat2', 'capacity1', 'capacity2',
         'prod-coal', 'Latitude', 'Longitude', 'pid','id', 'prod_oil', 'prod_gas', 'prod_year_oil', 'prod_year_gas', 'fuel', 'PCI5', 'PCI6', 'pci5','pci6','WKTFormat', 'Fuel', 'maturity', 'fuel-filter', 
@@ -278,9 +279,14 @@ final_cols = ['retired-year','plant-status','noneng_owner', 'parent_gem_id', 'st
 # add two together because gist list is so long and should be refactored soon
 final_cols.extend(steel_gist_table_cols)
 
+
 renaming_cols_dict = {
-                    'GIOMT': {'GEM wiki page URL': 'url', 'Operating status': 'status', 'Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name'},
-    
+                        'GIOMT': {'GEM Asset ID': 'pid','Coordinate accuracy': 'coordinate-accuracy','GEM wiki page URL': 'url', 'Operating status': 'status', 'Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name',
+                                  'Design capacity (ttpa)': 'capacity', 'Owner': 'owner', 'Parent': 'parent', 'Start date': 'start_date', 'Country/Area':'areas',
+                                  'Total resource (inferred, indicated and measured, thousand metric tonnes)': 'total-resource-(inferred', 
+                                  'Total reserves (proven and probable, thousand metric tonnes)': 'total-reserves-(proven-and-probable', 'Parent GEM Entity ID': 'parent-gem-id',
+                                  'Owner name in local language/script': 'owner-noneng', 'Owner GEM Entity ID': 'owner-gem-id', 'Subnational unit': 'subnat'},
+                            
                     'GCCT': {'GEM Plant ID': 'pid', 'GEM Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name', 'Coordinate accuracy': 'location-accuracy', 
                              'Subnational unit': 'subnat', 'Country/Area': 'areas',
                              'Cement Color': 'color', 'Operating status': 'status', 'Start date':'start_year', 'Owner name (English)': 'owner',
