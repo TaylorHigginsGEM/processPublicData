@@ -104,33 +104,18 @@ class MapObject:
         # do filter out oil
         gdf = self.trackers
         
-        # print(f'Check all columns:')
-        # for col in gdf.columns:
-        #     print(col)
-        # input('Is prod gas year there?') # fixed
-  
         # handle situation where Guinea-Bissau IS official and ok not to be split into separate countries 
         gdf['areas'] = gdf['areas'].apply(lambda x: x.replace('Guinea,Bissau','Guinea-Bissau')) 
         gdf['areas'] = gdf['areas'].apply(lambda x: x.replace('Timor,Leste','Timor-Leste')) 
 
         gdf['name'].fillna('',inplace=True)
         gdf['name'] = gdf['name'].astype(str)
-
-        # row['url'] if row['url'] != '' else 
         # handles for empty url rows and also non wiki cases SHOULD QC FOR THIS BEFOREHAND!! TO QC
         gdf['wiki-from-name'] = gdf.apply(lambda row: f"https://www.gem.wiki/{row['name'].strip().replace(' ', '_')}", axis=1)
 
         if 'url' not in gdf.columns:
             gdf['url'] = ''
-
-        print(gdf.columns)
-        print(gdf['wiki-from-name'])
-        print(gdf['name'])
-        print(gdf['url'])
-
-        input('check what is here wiki from name, name, url?')
         
-        # TODO investigate for egt
         gdf['url'] = gdf.apply(lambda row: row['wiki-from-name'] if 'gem.wiki' not in row['url'] else row['url'], axis=1)
         
         gdf['url'].fillna('',inplace=True)
@@ -176,18 +161,10 @@ class MapObject:
         if self.name == 'europe':
             print(self.name)
             gdf = pci_eu_map_read(gdf)
-            # TODO april 7th 11:23 pm do we want to uncomment the below? or is it in eu script?
-            # gdf = assign_eu_hydrogen_legend(gdf)
-            # gdf = gdf[gdf['tracker-acro']!='GGIT']
-            # gdf = manual_lng_pci_eu_temp_fix(gdf)
-            # gdf = swap_gas_methane(gdf)
-        
+
         gdf.fillna('', inplace = True)
         
         self.trackers = gdf
-
-
-
     
     def save_file(self):
         print(f'Saving file for map {self.name}')
@@ -545,12 +522,9 @@ class MapObject:
                 gdf.reset_index(inplace=True)
                 # Reset index in place
                 if tracker_sel == 'GCMT':
-                    print(f'cols after rename in GCMT:\n{gdf.info()}')
-                    print(gdf['start_year'])
-                    input('check if start-year there')
-                    # Handle for non-English Chinese wiki pages
-                    print('In if statement of rename and concat in map class for GCMT')
-                    
+                    logger.info(f'cols after rename in GCMT:\n{gdf.info()}')
+                    logger.info(gdf['start_year'])
+                    # Handle for non-English Chinese wiki pages                    
                     # Use np.where for a more Pythonic approach
                     gdf['wiki-from-name'] = np.where(
                         gdf['areas'] == 'China',

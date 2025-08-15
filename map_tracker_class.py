@@ -83,7 +83,7 @@ class TrackerObject:
 
     def set_df(self):
         # TODO move all these to all_config to make relative path set up cleaner
-        local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
+        # local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
 
         pkl_path = os.path.join(local_pkl_dir, f'trackerdf_for_{self.acro}_on_{iso_today_date}.pkl')
         print(f'See if data already exists locally for {self.name}...')
@@ -255,9 +255,9 @@ class TrackerObject:
 
                 # df = pd.read_parquet(f'{parquet_file_source_path}{parquet_s3}') 
                 self.data = df
-            local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
+            # local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
 
-            pkl_path = os.path.join(local_pkl_dir, f'trackerdf_for_{self.acro}_on_{iso_today_date}.pkl')
+            # pkl_path = os.path.join(local_pkl_dir, f'trackerdf_for_{self.acro}_on_{iso_today_date}.pkl')
 
             with open(pkl_path, 'wb') as f:
                 print(f'saved to {f}')
@@ -362,7 +362,7 @@ class TrackerObject:
     def list_all_contents(self, release):
         # TODO egt change what gets added so it is JUST the file 
         # not both: ['egt-term/2025-02/', 'egt-term/2025-02/GEM-EGT-Terminals-2025-02 DATA TEAM COPY.geojson']
-        acro = self.acro.lower() # eu, ggit
+        acro = self.acro # eu, ggit
         name = self.name.lower() # pipelines, terminals, gas        
         list_all_contents = [] # should be one file, if not then we need to remove / update
         # Initialize a session using DigitalOcean Spaces

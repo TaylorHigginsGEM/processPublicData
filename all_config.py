@@ -39,36 +39,13 @@ list_of_all_official = [
 ]
 
 pm_preview_mode = False # For Baird's testing work
-trackers_to_update = ["Iron ore Mines"] # official tracker tab name in map tracker log sheet
+trackers_to_update = ["Oil & Gas Plants"] # official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
 new_h2_data = False
-priority = [''] # europe # NOTE NEEDS TO BE [''] to be skipped NEEDS TO BE mapname in map_tab internal
-                # africa
-                # integrated
-                # europe
-                # asia
-                # latam
-                # ggit
-                # goit
-                # goget
-                # gctt
-                # gcpt
-                # gcmt
-                # gogpt
-                # gspt
-                # gwpt
-                # gnpt
-                # gbpt
-                # ggpt
-                # ghpt
-                # gist
-                # gmet
-                # giomt
-
-
-# run bash/subfolders.sh to create all compilation_output subfolder in each tracker folder
+priority = [''] 
+tracker_mapnames = ["europe", "africa", "integrated", "asia", "latam", "ggit", "goit", "goget", "gctt", "gcpt", "gcmt", "gogpt", "gspt", "gwpt", "gnpt", "gbpt", "ggpt", "ghpt", "gist", "gmet", "giomt"]
 
 # At the beginning of all_config.py
 def ensure_compilation_folders():
@@ -88,18 +65,18 @@ ensure_compilation_folders()
 # make necessary directories if they don't exist
 folders_needed = ["logfiles/", 'local_pkl/', "metadata_files/"]
 for folder in folders_needed:
-    
     if not os.path.exists(folder): # TODO in future move to be ../logfiles
         os.mkdir(f"{folder}")
-
-
-
-        
-
+    # folder_dir = os.path.join(os.path.dirname(__file__), folder)
+    # os.makedirs(folder_dir, exist_ok=True)
+metadata_dir = os.path.join(os.path.dirname(__file__), 'metadata_files')
+os.makedirs(metadata_dir, exist_ok=True)
+local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
+os.makedirs(local_pkl_dir, exist_ok=True)
 
 logpath = 'logfiles/'
 logger = logging.getLogger(__name__)
-log_file_path = f'{logpath}log_file.log' 
+log_file_path = f'{logpath}log_file_{today_date}.log' 
 logger.setLevel(logging.DEBUG)  # Set the lowest logging level for the logger
  
 logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(message)s')

@@ -86,8 +86,8 @@ def make_data_dwnlds(tracker):
                 map_obj = make_map_tracker_objs(map_tab_df, row, prep_dict)
                 
 
-                local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
-                os.makedirs(local_pkl_dir, exist_ok=True)
+                # local_pkl_dir = os.path.join(os.path.dirname(__file__), 'local_pkl')
+                # os.makedirs(local_pkl_dir, exist_ok=True)
                 pkl_path = os.path.join(local_pkl_dir, f'map_obj_for_{map_obj.name}_on_{iso_today_date}.pkl')
                 with open(pkl_path, 'wb') as f:
                     print(f'saved to {f}')
