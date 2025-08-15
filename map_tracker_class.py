@@ -6,7 +6,7 @@ from numpy import absolute
 import geopandas as gpd
 import boto3
 from creds import *
-from all_config import logpath
+from all_config import logpath, local_pkl_dir
 import time
 import numpy as np
 from shapely import wkt

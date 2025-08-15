@@ -43,7 +43,7 @@ def make_data_dwnlds(tracker):
     #         buffer_date = (pd.to_datetime(iso_today_date) - pd.Timedelta(days=bufferday)).strftime('%Y-%m-%d')
     #         print(buffer_date)
             
-    #         with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_objs_list{buffer_date}.pkl', 'rb') as f:
+    #         with open(f'local_pkl_dir/map_objs_list{buffer_date}.pkl', 'rb') as f:
     #             map_obj_list = pickle.load(f)
     #             for map_obj in map_obj_list:
     #                 print(map_obj.name)
@@ -76,7 +76,7 @@ def make_data_dwnlds(tracker):
                 # TODO THIS pkl file dumping will likely need to be removed before I push
                 # just helps to debugging
                 # try: 
-                #     with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/map_obj_for_{map_tab_df.loc[row, "mapname"]}_on_{iso_today_date}.pkl', 'rb') as f:
+                #     with open(f'local_pkl_dir/map_obj_for_{map_tab_df.loc[row, "mapname"]}_on_{iso_today_date}.pkl', 'rb') as f:
                         
                 #         print(f'opened from {f}')
                 #         input('CHECK')
