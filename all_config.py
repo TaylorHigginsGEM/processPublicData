@@ -9,6 +9,10 @@ import logging
 import subprocess
 from pathlib import Path
 
+today_date = datetime.today()
+
+iso_today_date = today_date.isoformat().split('T')[0]
+iso_today_date_folder = f'{iso_today_date}/'
 
 list_of_all_official = [
     "Oil & Gas Plants",
@@ -76,7 +80,7 @@ os.makedirs(local_pkl_dir, exist_ok=True)
 
 logpath = 'logfiles/'
 logger = logging.getLogger(__name__)
-log_file_path = f'{logpath}log_file_{today_date}.log' 
+log_file_path = f'{logpath}log_file_{iso_today_date}.log' 
 logger.setLevel(logging.DEBUG)  # Set the lowest logging level for the logger
  
 logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -199,10 +203,7 @@ rep_point_key = '1Bu2RhxgvRW7yEJu6zbng_nudXBYRASNvRtgIOvrDN0c', # GEM Standard C
 rep_point_tab = ['gem standard representative points']
 # Format the date in ISO format
 # Get today's date
-today_date = datetime.today()
 
-iso_today_date = today_date.isoformat().split('T')[0]
-iso_today_date_folder = f'{iso_today_date}/'
 client_secret_full_path = os.path.expanduser("~/") + client_secret
 gem_path = os.path.join(os.path.dirname(__file__), 'trackers/')
 # gem_path_tst = '~/testing/'
