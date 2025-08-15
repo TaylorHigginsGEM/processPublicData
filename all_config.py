@@ -43,7 +43,7 @@ list_of_all_official = [
 ]
 
 pm_preview_mode = False # For Baird's testing work
-trackers_to_update = ["Oil & Gas Plants"] # official tracker tab name in map tracker log sheet
+trackers_to_update = ["Iron ore Mines"] # official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
