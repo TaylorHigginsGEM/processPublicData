@@ -245,12 +245,13 @@ def make_data_dwnlds(tracker):
         for filename in [xlsfile, xlsfile_testing]:
             df = pd.read_excel(filename)
             # save parquet file locally
-            process = save_to_s3(map_obj, df, 'datadownload', path_dwn)
-            # save parquet file in DO in latest folder
-            # Print the output and errors (if any)
-            print(process.stdout.decode('utf-8'))
-            if process.stderr:
-                print(process.stderr.decode('utf-8'))
+            # bypass parquet for Hannah todo
+            # process = save_to_s3(map_obj, df, 'datadownload', path_dwn)
+            # # save parquet file in DO in latest folder
+            # # Print the output and errors (if any)
+            # print(process.stdout.decode('utf-8'))
+            # if process.stderr:
+            #     print(process.stderr.decode('utf-8'))
         
         # except Exception as e:
         #     print(f'Issue with {map_obj.name}, let us skip it, go onto making maps and then come back.')

@@ -89,22 +89,21 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
     # Prepare and execute S3 upload command
     # if geojsonpath != '' and filetype == 'map':
         
-    #     do_command_s3 = (
-    #         f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-    #         f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{obj.name}/{releaseiso}/{parquetpath} '
-    #         f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read && '
-    #         f'aws s3 cp {geojsonpath} s3://$BUCKETEER_BUCKET_NAME/{obj.name}/{releaseiso}/{parquetpath} '
-    #         f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
-    #     )
-    # else:
-    #     do_command_s3 = (
-    #         f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
-    #         f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{obj.name}/{releaseiso}/{parquetpath} '
-    #         f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
-    #     )    
+        do_command_s3 = (
+            f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
+            f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{obj.name}/{releaseiso}/{parquetpath} '
+            f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read && '
+            f'aws s3 cp {geojsonpath} s3://$BUCKETEER_BUCKET_NAME/{obj.name}/{releaseiso}/{parquetpath} '
+            f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
+        )
+    else:
+        do_command_s3 = (
+            f'export BUCKETEER_BUCKET_NAME=publicgemdata && '
+            f'aws s3 cp {parquetpath} s3://$BUCKETEER_BUCKET_NAME/{obj.name}/{releaseiso}/{parquetpath} '
+            f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
+        )    
         
-    # TODO address parquet error Hannah
-    # process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return process
 
 

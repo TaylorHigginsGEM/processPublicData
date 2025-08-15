@@ -208,11 +208,12 @@ class MapObject:
             gdf.to_csv(f'{path_for_download_and_map_files_af}{self.name}_map_{iso_today_date}.csv', encoding='utf-8')
             gdf.to_csv(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/testingcode/files/{self.name}_map_{iso_today_date}.csv', encoding='utf-8')
             
-            process = save_to_s3(self, gdf, 'map', path_for_download_and_map_files_af)
+            # bypass parquet for now todo Hannah
+            # process = save_to_s3(self, gdf, 'map', path_for_download_and_map_files_af)
 
-            print(process.stdout.decode('utf-8'))
-            if process.stderr:
-                print(process.stderr.decode('utf-8'))
+            # print(process.stdout.decode('utf-8'))
+            # if process.stderr:
+            #     print(process.stderr.decode('utf-8'))
                         
 
             newcountriesjs = list(set(gdf['areas'].to_list()))
@@ -241,11 +242,12 @@ class MapObject:
             gdf.to_csv(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/testingcode/files/{self.name}_map_{iso_today_date}.csv', encoding='utf-8')
 
 
-            process = save_to_s3(self, gdf, 'map', path_for_download_and_map_files)
+            # TODO comment out save to s3 to bypass parquet issue Hannah
+            # process = save_to_s3(self, gdf, 'map', path_for_download_and_map_files)
 
-            print(process.stdout.decode('utf-8'))
-            if process.stderr:
-                print(process.stderr.decode('utf-8'))
+            # print(process.stdout.decode('utf-8'))
+            # if process.stderr:
+            #     print(process.stderr.decode('utf-8'))
                 
             newcountriesjs = list(set(gdf['areas'].to_list()))
             rebuild_countriesjs(self.name, newcountriesjs)
