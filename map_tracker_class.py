@@ -1001,6 +1001,8 @@ class TrackerObject:
         df = self.data
         
         df[['Latitude', 'Longitude']] = df['Coordinates'].str.split(', ', expand=True)
+        df[['Latitude', 'Longitude']] = df['Coordinates'].str.split(',', expand=True) # qc test
+
         self.data = df 
 
 
