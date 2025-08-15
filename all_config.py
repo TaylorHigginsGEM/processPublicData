@@ -280,8 +280,12 @@ final_cols = ['retired-year','plant-status','noneng_owner', 'parent_gem_id', 'st
 final_cols.extend(steel_gist_table_cols)
 
 renaming_cols_dict = {
-                    'GIOMT': {'GEM wiki page URL': 'url', 'Operating status': 'status', 'Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name'},
-    
+                        'GIOMT': {'Coordinate accuracy': 'coordinate-accuracy','GEM wiki page URL': 'url', 'Operating status': 'status', 'Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name',
+                                  'Design capacity (ttpa)': 'capacity', 'Owner': 'owner', 'Parent': 'parent', 'Start date': 'start_date', 'Country/Area':'areas',
+                                  'Total resource (inferred, indicated and measured, thousand metric tonnes)': 'total-resource-(inferred', 
+                                  'Total reserves (proven and probable, thousand metric tonnes)': 'total-reserves-(proven-and-probable', 'Parent GEM Entity ID': 'parent-gem-id',
+                                  'Owner name in local language/script': 'owner-noneng', 'Owner GEM Entity ID': 'owner-gem-id', 'Subnational unit': 'subnat'},
+                            
                     'GCCT': {'GEM Plant ID': 'pid', 'GEM Asset name (English)': 'name', 'Asset name (other language)': 'noneng_name', 'Coordinate accuracy': 'location-accuracy', 
                              'Subnational unit': 'subnat', 'Country/Area': 'areas',
                              'Cement Color': 'color', 'Operating status': 'status', 'Start date':'start_year', 'Owner name (English)': 'owner',
