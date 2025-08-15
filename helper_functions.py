@@ -58,7 +58,7 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
     # Ensure geometry is properly handled before saving
     if 'geometry' in df.columns:
         if not isinstance(df, gpd.GeoDataFrame):
-            print("Converting DataFrame to GeoDataFrame...")
+            # print("Converting DataFrame to GeoDataFrame...")
             df = gpd.GeoDataFrame(df, geometry='geometry', crs="EPSG:4326")
 
         # Convert geometry to WKT format for saving as Parquet
@@ -76,7 +76,7 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
     
     parquetpath = f"{path_dwn}{obj.name}{filetype}{releaseiso}.parquet"
     df.to_parquet(parquetpath, index=False)
-    print('Parquet file is saved!')
+    # print('Parquet file is saved!')
     
     # # Determine S3 folder based on filetype
     # if filetype == 'map':
@@ -109,10 +109,13 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
 
 
 def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
-    
+    # metadata_dir = os.path.join(os.path.dirname(__file__), 'metadata_files')
+    # os.makedirs(metadata_dir, exist_ok=True)
+    # write to config file total length of dfs
+    mfile_actual = os.path.join(metadata_dir, f'{map_obj.name}_{releaseiso}_{iso_today_date}_metadata.yaml')
+
      
     # save to metadata
-    mfile_actual = f"/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/metadata_files/{map_obj.name}_{releaseiso}_{iso_today_date}_metadata.yaml"
     # print(f'this is mfile_actual: {mfile_actual}')
     # input('check if it matches')
     # Prepare dictionary representations, but do not convert tracker_source_obj.data or map_obj.trackers
@@ -164,7 +167,7 @@ def save_raw_s3(map_obj, tracker_source_obj, TrackerObject):
 
     # mapobj.name
     for trackerobj in map_obj.trackers: # list of tracker objeccts
-        print(f'This is trackerobj.name: {trackerobj.name}') 
+        logger.info(f'This is trackerobj.name: {trackerobj.name}')
         try:
             originaldf = trackerobj.data
 
@@ -234,8 +237,12 @@ def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
     """
     Save map file to S3. df2 is optional.
     """
+    
+    # TODO move this os.path work to util or config file like Hannah does it!
+    # metadata_dir = os.path.join(os.path.dirname(__file__), 'metadata_files')
+    # os.makedirs(metadata_dir, exist_ok=True)
     # write to config file total length of dfs
-    mfile_actual = f"/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/metadata_files/{map_obj_name}_{releaseiso}_{iso_today_date}_metadata.yaml"
+    mfile_actual = os.path.join(metadata_dir, f'{map_obj_name}_{releaseiso}_{iso_today_date}_metadata.yaml')
 
     # Prepare metadata dictionary for logging
     meta_entry = {
@@ -300,6 +307,9 @@ def save_mapfile_s3(map_obj_name, tracker_name, filter, df1, df2=None):
                 f'aws s3 cp {filt_file} s3://$BUCKETEER_BUCKET_NAME/{map_obj_name}/{releaseiso}/{filt_file} '
                 f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
                 )    
+            
+            # TO LOOK OVER THIS SIMPLER boto3 way to push to s3, see if you can set public
+            # https://github.com/GlobalEnergyMonitor/WikiURLProcessing/blob/main/upload_csv_to_s3bucket.py
 
             subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # delete the locally saved file
@@ -418,7 +428,7 @@ def gspread_access_file_read_only(key, tab_list):
     title = name of the sheet you want to read
     returns a df of the sheet
     """
-    print(f'this is key and tab list in gspread access file read only function:\n{key}{tab_list}')
+    logger.info(f'this is key and tab list in gspread access file read only function:\n{key}{tab_list}')
     gspread_creds = gspread.oauth(
         scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"],
         credentials_filename=client_secret_full_path,
@@ -626,27 +636,27 @@ def geojson_to_gdf(geojson_file):
     
 #     return f"{path_dwn}{mapname}{releaseiso}.parquet"
 
-def get_standard_country_names():
+# def get_standard_country_names():
     
-    if local_copy:
+#     if local_copy:
 
-        with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'rb') as f:
-            gem_standard_country_names = pickle.load(f)
+#         with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'rb') as f:
+#             gem_standard_country_names = pickle.load(f)
     
-    else:
-        df = gspread_access_file_read_only(
-            '1mtlwSJfWy1gbIwXVgpP3d6CcUEWo2OM0IvPD6yztGXI', 
-            ['Countries'],
-        )
-        gem_standard_country_names = df['GEM Standard Country Name'].tolist()
+#     else:
+#         df = gspread_access_file_read_only(
+#             '1mtlwSJfWy1gbIwXVgpP3d6CcUEWo2OM0IvPD6yztGXI', 
+#             ['Countries'],
+#         )
+#         gem_standard_country_names = df['GEM Standard Country Name'].tolist()
         
-        with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'wb') as f:
-            pickle.dump(gem_standard_country_names, f)
+#         with open(f'/Users/gem-tah/GEM_INFO/GEM_WORK/earthrise-maps/gem_tracker_maps/local_pkl/gem_standard_country_names_{iso_today_date}.pkl', 'wb') as f:
+#             pickle.dump(gem_standard_country_names, f)
         
     
-    return gem_standard_country_names
+#     return gem_standard_country_names
 
-# gem_standard_country_names = get_standard_country_names()
+# # gem_standard_country_names = get_standard_country_names()
 
 
 
@@ -926,20 +936,18 @@ def find_missing_cap(df):
 
 def drop_internal_tabs(df):
     df = df.drop(['tracker-acro','official_name','country_to_check'], axis=1)
-    print(df.columns)
     # input('Check to see that tracker-acro and other internal cols are gone')
     return df
 
 def convert_google_to_gdf(df):
     # TODO DOCUMENT HOW EU PIPELINES HY DATA PROCESSED UNTIL HAVE GEOJSON FILE
     df_initial = df.copy()
-    print(df.columns)
     # input('check if WKTFormat is there, and also PipelineName')
     df = df[df['WKTFormat'] != '--']
-    print(df[['PipelineName', 'WKTFormat']]) # or name
+    # print(df[['PipelineName', 'WKTFormat']]) # or name
     df['WKTFormat'].fillna('')
     df = df[df['WKTFormat'] != '']
-    print(df[['PipelineName', 'WKTFormat']])
+    # print(df[['PipelineName', 'WKTFormat']])
 
     to_drop = []
     for row in df.index:
@@ -966,32 +974,18 @@ def convert_google_to_gdf(df):
     # input('Dropped pipeline')
 
     df_to_drop = df.loc[to_drop_again]
-# print(df_to_drop)
-# input('Inspect that it is a df and only 10')
-# then add geometry column from separate file and drop wkt, 
-# then concat later in two steps after this main df is a gdf  
-# df_to_drop = insert_incomplete_WKTformat_ggit_eu(df_to_drop)
 
-# for col in df_to_drop.columns:
-#     print(col)
-
-# for col in df.columns:
-#     print(col)
 
     df = df.drop(to_drop_again) 
     
     df['geometry'] = df['WKTFormat'].apply(lambda x: wkt.loads(x))
     
-    print(len(df))
+    # print(len(df))
     df = pd.concat([df, df_to_drop])
-    print(len(df))
-    input('length after of length of df')
+    # print(len(df))
+    # input('length after of length of df')
     
-    # print(df['geometry'])
-    # print(df['PCI5'])
-    # input('CHECK PCI5')
-
-    input(f'Check size before and after: now | {len(df)} then | {len(df_initial)}')
+    # input(f'Check size before and after: now | {len(df)} then | {len(df_initial)}')
     
     gdf = gpd.GeoDataFrame(df, geometry='geometry', crs="EPSG:4326")
     return gdf
@@ -1020,28 +1014,6 @@ def remove_diacritics(name_value):
 
     return name_value
 
-# def split_goget_ggit_eu(df):
-
-#     if df['tracker'].iloc[0] == 'extraction':
-#         # df_goget_missing_units.to_csv('compilation_output/missing_gas_oil_unit_goget.csv')
-#         # gdf['tracker_custom'] = gdf.apply(lambda row: 'GOGET - gas' if row['Production - Gas (Million m³/y)'] != '' else 'GOGET-oil', axis=1)
-#         df['tracker_custom'] = 'GOGET-oil'
-
-#     elif df['tracker'].iloc[0] == 'term':
-#         # gdf_ggit_missing_units = df[df['facilitytype']=='']
-#         # gdf_ggit_missing_units.to_csv('/content/drive/MyDrive/output_from_colab/missing_gas_oil_unit_ggit.csv')
-#         # df = df[df['facilitytype']!='']
-#         df['tracker_custom'] = df.apply(lambda row: 'GGIT-import' if row['facilitytype'] == 'Import' else 'GGIT-export', axis=1)
-
-#     elif df['tracker'].iloc[0] == 'plants':
-#         df['tracker_custom'] = 'GOGPT'
-
-#     elif df['tracker'].iloc[0] == 'pipes':
-#         df['tracker_custom'] = 'GGIT'
-#     elif df['tracker'].iloc[0] == 'plants_hy':
-#         df['tracker_custom'] = 'GOGPT'
-
-#     return df
 
 def split_goget_ggit_eu(df):
 
@@ -1095,7 +1067,6 @@ def create_conversion_df(conversion_key, conversion_tab):
 def assign_conversion_factors(df, conversion_df):
 
     for row in df.index:
-        print(df.columns)
         if df.loc[row, 'tracker_custom'] == 'GOGET-oil':
             df.loc[row, 'original_units'] = conversion_df[conversion_df['tracker']=='GOGET-oil']['original_units'].values[0]
             df.loc[row, 'conversion_factor'] = conversion_df[conversion_df['tracker']=='GOGET-oil']['conversion_factor'].values[0]
@@ -1305,8 +1276,7 @@ def make_sure_methane_is_none_maturity(gdf):
 def map_ready_statuses(cleaned_dict_map_by_one_gdf_with_conversions):
     cleaned_dict_by_map_one_gdf_with_better_statuses = {}
     for mapname, gdf in cleaned_dict_map_by_one_gdf_with_conversions.items():
-        print(gdf.columns.to_list())
-        input('inspect cols no tracker-acro?')
+
         path_for_test_results = gem_path + mapname + '/test_results/'           
 
         # print(set(gdf['status'].to_list()))
@@ -1784,7 +1754,6 @@ def adjusting_geometry(df):
     # print(tracker)
     # input('check')
     df.columns = df.columns.str.lower()
-    print(df.columns)
 
     if 'geometry' not in df.columns:
         if 'latitude' in df.columns and 'longitude' in df.columns:
@@ -1795,7 +1764,7 @@ def adjusting_geometry(df):
             df = gpd.GeoDataFrame(df, geometry=geometry_col, crs=crs)
         else:
             print(df.columns)
-            input('no lat long or geo?')
+            input('no lat long or geo? check columns above...')
 
 
     else:
@@ -1832,7 +1801,7 @@ def convert_coords_to_point(df):
         df['geometry'] = df.apply(lambda row: Point(row['longitude'], row['latitude']), axis=1)
     else:
         print('issues with finding lat lng to convert to gdf!!')
-        print(df.columns)
+        print(f'{df.columns} \n check columns above')
             
             
     gdf = gpd.GeoDataFrame(df, geometry=geometry_col, crs=crs)
@@ -3312,8 +3281,7 @@ def check_rename_keys(renaming_dict_sel, gdf):
         if k not in gdf_cols:
             print(f'Missing {k}')
     
-    print(f'This is all cols in df: \n {gdf_cols} \n')
-    input('CHECK')
+    logger.info(f'This is all cols in df: \n {gdf_cols} \n')
     
     
     
@@ -3366,7 +3334,7 @@ def split_coords(df):
         df['Longitude'] = df['Coordinates'].apply(lambda x: x.split(',')[1])
     else:
         print(df.columns)
-        print('Do you see Coordinates in there?')
+        print('Do you see Coordinates in there above?')
 
     return df
 
@@ -3438,7 +3406,7 @@ def make_plant_level_status(unit_status_list, plant_id):
         print(f'Status set list: \n{set_list}')
         print(f'This is the plant id to check:\n{plant_id}')
         plant_status = ''
-        input('Check above')
+        # input('Check above')
 
     return plant_status
 
