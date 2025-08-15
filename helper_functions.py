@@ -73,9 +73,9 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
             # if so, convert it to string
             df[col] = df[col].fillna('').astype(str)
         
-    
-    parquetpath = f"{path_dwn}{obj.name}{filetype}{releaseiso}.parquet"
-    df.to_parquet(parquetpath, index=False)
+    # TODO address parquet error Hannah
+    # parquetpath = f"{path_dwn}{obj.name}{filetype}{releaseiso}.parquet"
+    # df.to_parquet(parquetpath, index=False)
     # print('Parquet file is saved!')
     
     # # Determine S3 folder based on filetype
@@ -103,8 +103,8 @@ def save_to_s3(obj, df, filetype='', path_dwn=''):
             f'--endpoint-url https://nyc3.digitaloceanspaces.com --acl public-read'
         )    
         
-            
-    process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # TODO address parquet error Hannah
+    # process = subprocess.run(do_command_s3, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return process
 
 
