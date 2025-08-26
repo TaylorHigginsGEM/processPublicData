@@ -43,7 +43,7 @@ list_of_all_official = [
 ]
 
 pm_preview_mode = False # For Baird's testing work
-trackers_to_update = ["Iron ore Mines"] # official tracker tab name in map tracker log sheet
+trackers_to_update = ["Nuclear"] # official tracker tab name in map tracker log sheet
 new_release_date = 'August_2025' # for within about page NEEDS TO BE FULL MONTH
 releaseiso = '2025-08'
 simplified = False # True False
@@ -115,6 +115,8 @@ logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctim
     # logger.addHandler(error_handler)
 
 
+METADATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'metadata_files')
+os.makedirs(METADATA_DIR, exist_ok=True)
 
 
 tracker_folder_path = 'trackers/'
